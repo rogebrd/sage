@@ -1,0 +1,27 @@
+Resources:
+
+  # Account Database
+  AccountDatabase:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "Accounts"
+      BillingMode: "PROVISIONED"
+      KeySchema:
+        KeyType: "HASH"
+        AttributeName: "AccountId"
+
+  # Transaction Database
+  TransactionDatabase:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "Transactions"
+      BillingMode: "PROVISIONED"
+      KeySchema:
+        KeyType: "HASH"
+        AttributeName: "TransactionId"
+
+# Stack Outputs
+Outputs:
+  StackArn:
+    Value: !Ref AWS::StackId
+    Description: Stack Id
