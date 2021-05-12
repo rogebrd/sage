@@ -40,6 +40,7 @@ const accounts = [
 const transactions = [
   {
     id: 1,
+    date: new Date(),
     vendor: "Vendor 1",
     account: accounts[1],
     description: "Test Transaction",
@@ -47,6 +48,7 @@ const transactions = [
   },
   {
     id: 2,
+    date: new Date(),
     vendor: "Vendor 2",
     account: accounts[0],
     description: "Test Transaction",

@@ -11,6 +11,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ tra
         <table className="transaction-table">
             <tr className="transaction-table__header">
                 <th className="transaction-table__header--id">Id</th>
+                <th className="transaction-table__header--date">Date</th>
                 <th className="transaction-table__header--vendor">Vendor</th>
                 <th className="transaction-table__header--account">Account</th>
                 <th className="transaction-table__header--description">Description</th>
@@ -23,6 +24,9 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ tra
                         <tr className="transaction-table__row">
                             <td className="transaction-table__row--id">
                                 {transaction.id}
+                            </td>
+                            <td className="transaction-table__row--date">
+                                {transaction.date.toISOString()}
                             </td>
                             <td className="transaction-table__row--vendor">
                                 {transaction.vendor}
