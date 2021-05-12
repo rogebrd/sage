@@ -1,0 +1,56 @@
+@import "colors";
+
+html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: $light-slate-gray;
+  height: 100%;
+}
+
+body, #root{
+  height: 100%;
+}
+
+.app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+
+  &__header {
+    margin: 0;
+    background: $ming;
+    height: fit-content;
+    display: flex;
+    flex-flow: column;
+    border-bottom: 1px solid $resin-black;
+
+    &__text {
+      color: $resin-black;
+      text-align: center;
+    }
+  }
+
+  &__content {
+    display: flex;
+    height: 100%;
+
+    &__sidebar {
+      margin: 0;
+      padding: 0;
+      width: 400px;
+      background: $morning-blue;
+      border-right: 1px solid $resin-black;
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__main {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

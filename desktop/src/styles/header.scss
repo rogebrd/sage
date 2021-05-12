@@ -1,0 +1,13 @@
+@import "colors";
+
+.header {
+    margin: 0;
+    padding-left: 20px;
+    height: fit-content;
+    display: flex;
+    flex-flow: column;
+
+    &__text {
+      color: $resin-black;
+    }
+}

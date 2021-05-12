@@ -1,0 +1,51 @@
+@import "colors";
+
+.account-table {
+    width: 100%;
+    color: $resin-black;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    &__header {
+        background: $copper-rose;
+        border-bottom: 1px solid $resin-black;
+    }
+
+    &__subheader {
+        text-align: center;
+        font-weight: bolder;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        background: $resin-black;
+        color: $english-lavender;
+    }
+
+    &__row {
+        text-align: center;
+
+        &:nth-child(even) {
+            background: $english-lavender;
+        }
+
+        &--id {
+            width: 10%;
+        }
+
+        &--name {
+            padding-left: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        &--balance {
+            width: 30%;
+            text-align: left;
+            padding-left: 10px;
+        }
+    }
+}

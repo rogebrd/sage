@@ -1,0 +1,24 @@
+@import "colors";
+
+.transaction-table {
+    width: 100%;
+    color: $resin-black;
+    border-collapse: collapse;
+
+    &__header {
+        background: $english-lavender;
+        border-bottom: 1px solid $resin-black;
+    }
+
+    &__row {
+        text-align: center;
+
+        &--id {
+            width: 10%;
+        }
+
+        &--delete {
+            width: 10%;
+        }
+    }
+}
