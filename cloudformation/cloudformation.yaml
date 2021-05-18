@@ -1,27 +1,161 @@
 Resources:
-
   # Account Database
-  AccountDatabase:
+  AccountTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: "Accounts"
-      BillingMode: "PROVISIONED"
+      TableName: 'Accounts'
+      BillingMode: 'PROVISIONED'
       KeySchema:
-        KeyType: "HASH"
-        AttributeName: "AccountId"
+        - KeyType: 'HASH'
+          AttributeName: 'AccountId'
+      AttributeDefinitions:
+        - AttributeName: 'AccountId'
+          AttributeType: 'S'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
   # Transaction Database
-  TransactionDatabase:
+  TransactionTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: "Transactions"
-      BillingMode: "PROVISIONED"
+      TableName: 'Transactions'
+      BillingMode: 'PROVISIONED'
       KeySchema:
-        KeyType: "HASH"
-        AttributeName: "TransactionId"
+        - KeyType: 'HASH'
+          AttributeName: 'TransactionId'
+      AttributeDefinitions:
+        - AttributeName: 'TransactionId'
+          AttributeType: 'S'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+    # Sage Get Lambda Definition
+  SageGetLambda:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Environment:
+        Variables:
+          TRANSACTION_TABLE_NAME: !Ref TransactionTable
+          ACCOUNT_TABLE_NAME: !Ref AccountTable
+      Handler: 'lambda/sage.get'
+      Code:
+        S3Bucket: sage-codedeployment-bucket
+        S3Key: build/sage.zip
+      Runtime: python3.7
+      Description: Gets the JSON data for the main page
+      Timeout: 30
+      MemorySize: 128
+      Role: !GetAtt
+          - SageGetLambdaInvocationRole
+          - Arn
+
+  # IAM permissions for lambda
+  SageGetLambdaInvocationRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Description: Role for lambda for Sage Get
+        AssumeRolePolicyDocument:
+          Statement:
+            - Action: ['sts:AssumeRole']
+              Effect: Allow
+              Principal:
+                Service: [lambda.amazonaws.com]
+          Version: '2012-10-17'
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        Policies:
+            - PolicyDocument:
+                Statement:
+                  Action: '*'
+                  Effect: Allow
+                  Resource: '*'
+                Version: '2012-10-17'
+              PolicyName: SageGetDynamoDbPolicy
+  
+  # Api Gateway for publishing data
+  ApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: Sage
+      Description: Sage Gateway
+
+  # Get API for main page
+  SageGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties: 
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ResourceId: !GetAtt
+        - ApiGateway
+        - RootResourceId
+      RestApiId: !Ref ApiGateway
+      Integration:
+        IntegrationHttpMethod: GET
+        Type: 'AWS'
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt
+            - SageGetLambda
+            - Arn
+  OptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ResourceId: !GetAtt
+        - ApiGateway
+        - RootResourceId
+      RestApiId: !Ref ApiGateway
+      Integration:
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: "{'statusCode': 200}"
+        Type: MOCK
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: false
+              method.response.header.Access-Control-Allow-Methods: false
+              method.response.header.Access-Control-Allow-Origin: false
+  
+  # Lambda hookup for API Gateway
+  SageGetLambdaApiGatewayInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt
+        - SageGetLambda
+        - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/POST/'
+
+  # API Gateway Deployment 
+  # last to avoid no method errors
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - "OptionsMethod"
+    Properties:
+      RestApiId: !Ref ApiGateway
+      StageName: prod
 
 # Stack Outputs
 Outputs:
+  ApiGatewayInvokeURL:
+      Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/'
+      Description: URL to Invoke Api Gateway
   StackArn:
     Value: !Ref AWS::StackId
     Description: Stack Id
