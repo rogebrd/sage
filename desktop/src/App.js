@@ -3,6 +3,7 @@ import './styles/App.scss';
 import { TransactionTable } from './components/transactionTable';
 import { Header } from './components/base/header';
 import { AccountType } from './types/account';
+import { AddAccountModal } from './components/addAccountModal';
 
 const accounts = [
   {
@@ -68,12 +69,12 @@ function App() {
         <div className="app__content__sidebar">
           <Header text="Accounts" />
           <AccountTable accounts={accounts} />
+          <AddAccountModal />
         </div>
         <div className="app__content__main">
           <Header text="Transactions" />
           <TransactionTable transactions={transactions} />
         </div>
-
       </div>
     </div >
   );
