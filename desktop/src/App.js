@@ -2,7 +2,6 @@ import { AccountTable } from './components/accountTable';
 import './styles/App.scss';
 import { TransactionTable } from './components/transactionTable';
 import { Header } from './components/base/header';
-import { AccountType } from './types/account';
 import { AddAccountModal } from './components/addAccountModal';
 
 const accounts = [
@@ -10,31 +9,31 @@ const accounts = [
     id: 1,
     name: "Cash",
     balance: 100.0,
-    type: AccountType.Cash
+    type: "Cash"
   },
   {
     id: 2,
     name: "Amex",
     balance: 100.0,
-    type: AccountType.Liability
+    type: "Liability"
   },
   {
     id: 3,
     name: "Checking",
     balance: 200.0,
-    type: AccountType.Cash
+    type: "Cash"
   },
   {
     id: 4,
     name: "Savings",
     balance: 1000.0,
-    type: AccountType.Cash
+    type: "Cash"
   },
   {
     id: 5,
     name: "Robinhood",
     balance: 100.0,
-    type: AccountType.Investment
+    type: "Investment"
   },
 ];
 
@@ -62,7 +61,7 @@ function App() {
     <div className="app">
       <div className="app__header">
         <h1 className="app__header__text">
-          Omni Financial Tracker
+          Sage Financial Tracker
         </h1>
       </div>
       <div className="app__content">

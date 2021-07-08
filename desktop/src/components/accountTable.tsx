@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Account, AccountType } from "../types/account";
+import { Account } from "../types/account";
 import "../styles/accountTable.scss";
 
 type AccountTableProps = {
@@ -14,31 +14,37 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
                 Cash
             </div>
             <table>
-                {
-                    accounts.filter((account) => (account.type == AccountType.Cash)).map((account) => (
-                        <AccountTableRow account={account} />
-                    ))
-                }
+                <tbody>
+                    {
+                        accounts.filter((account) => (account.type == 'Cash')).map((account) => (
+                            <AccountTableRow account={account} />
+                        ))
+                    }
+                </tbody>
             </table>
             <div className="account-table__subheader">
                 Investment
             </div>
             <table>
-                {
-                    accounts.filter((account) => (account.type == AccountType.Investment)).map((account) => (
-                        <AccountTableRow account={account} />
-                    ))
-                }
+                <tbody>
+                    {
+                        accounts.filter((account) => (account.type == 'Investment')).map((account) => (
+                            <AccountTableRow account={account} />
+                        ))
+                    }
+                </tbody>
             </table>
             <div className="account-table__subheader">
                 Liability
             </div>
             <table>
-                {
-                    accounts.filter((account) => (account.type == AccountType.Liability)).map((account) => (
-                        <AccountTableRow account={account} />
-                    ))
-                }
+                <tbody>
+                    {
+                        accounts.filter((account) => (account.type == 'Liability')).map((account) => (
+                            <AccountTableRow account={account} />
+                        ))
+                    }
+                </tbody>
             </table>
         </div>
     );

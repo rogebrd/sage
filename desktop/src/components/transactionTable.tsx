@@ -9,15 +9,17 @@ type TransactionTableProps = {
 export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ transactions }) => {
     return (
         <table className="transaction-table">
-            <tr className="transaction-table__header">
-                <th className="transaction-table__header--id">Id</th>
-                <th className="transaction-table__header--date">Date</th>
-                <th className="transaction-table__header--vendor">Vendor</th>
-                <th className="transaction-table__header--account">Account</th>
-                <th className="transaction-table__header--description">Description</th>
-                <th className="transaction-table__header--amount">Amount</th>
-                <th className="transaction-table__header--delete"></th>
-            </tr>
+            <thead>
+                <tr className="transaction-table__header">
+                    <th className="transaction-table__header--id">Id</th>
+                    <th className="transaction-table__header--date">Date</th>
+                    <th className="transaction-table__header--vendor">Vendor</th>
+                    <th className="transaction-table__header--account">Account</th>
+                    <th className="transaction-table__header--description">Description</th>
+                    <th className="transaction-table__header--amount">Amount</th>
+                    <th className="transaction-table__header--delete"></th>
+                </tr>
+            </thead>
             <tbody>
                 {
                     transactions.map((transaction) => (
