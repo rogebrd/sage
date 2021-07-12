@@ -1,0 +1,1 @@
+export const formatDate = (date: Date) => (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()

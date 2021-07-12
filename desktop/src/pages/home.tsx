@@ -61,18 +61,29 @@ export const HomePage: FunctionComponent = () => {
             {
                 id: 1,
                 date: new Date(),
-                vendor: "Vendor 1",
+                vendor: "Taqueria",
                 accountIndex: 1,
-                description: "Test Transaction",
-                amount: 99.99
+                description: "Chicken Burrito",
+                amount: 19.99,
+                category: "Food",
             },
             {
                 id: 2,
                 date: new Date(),
-                vendor: "Vendor 2",
+                vendor: "J.C. Deli",
+                accountIndex: 1,
+                description: "Sandwich",
+                amount: 6.54,
+                category: "Food",
+            },
+            {
+                id: 3,
+                date: new Date(),
+                vendor: "N/A",
                 accountIndex: 0,
-                description: "Test Transaction",
-                amount: 99.99
+                description: "Initial Balance",
+                amount: 100.00,
+                category: "",
             }
         ]);
     }, []);

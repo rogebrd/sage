@@ -3,6 +3,7 @@ import { Account } from "../types/account";
 import { Transaction } from "../types/transaction";
 import "../styles/transactionTable.scss";
 import { Button } from "./base/button";
+import { formatDate } from "../util/util";
 
 type TransactionTableProps = {
     accounts: Account[],
@@ -21,7 +22,8 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
                     <th className="transaction-table__header--account">Account</th>
                     <th className="transaction-table__header--description">Description</th>
                     <th className="transaction-table__header--amount">Amount</th>
-                    <th className="transaction-table__header--delete"></th>
+                    <th className="transaction-table__header--category">Category</th>
+                    <th className="transaction-table__header--options"></th>
                 </tr>
             </thead>
             <tbody>
@@ -32,13 +34,13 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
                                 {transaction.id}
                             </td>
                             <td className="transaction-table__row--date">
-                                {transaction.date.toISOString()}
-                            </td>
-                            <td className="transaction-table__row--vendor">
-                                {transaction.vendor}
+                                {formatDate(transaction.date)}
                             </td>
                             <td className="transaction-table__row--account">
                                 {accounts[transaction.accountIndex].name}
+                            </td>
+                            <td className="transaction-table__row--vendor">
+                                {transaction.vendor}
                             </td>
                             <td className="transaction-table__row--description">
                                 {transaction.description}
@@ -46,7 +48,10 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
                             <td className="transaction-table__row--amount">
                                 ${transaction.amount}
                             </td>
-                            <td className="transaction-table__row--delete">
+                            <td className="transaction-table__row--category">
+                                {transaction.category}
+                            </td>
+                            <td className="transaction-table__row--options">
                                 <Button text="X" onClick={() => deleteTransactionCallback(index)} />
                             </td>
                         </tr>

@@ -16,6 +16,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
     const [transactionAccountIndex, setTransactionAccountIndex] = React.useState(0);
     const [transactionDescription, setTransactionDescription] = React.useState("");
     const [transactionAmount, setTransactionAmount] = React.useState(0.00);
+    const [transactionCategory, setTransactionCategory] = React.useState("");
 
     const addTransaction = (event: any) => {
         event.preventDefault()
@@ -25,7 +26,8 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
             vendor: transactionVendor,
             accountIndex: transactionAccountIndex,
             description: transactionDescription,
-            amount: transactionAmount
+            amount: transactionAmount,
+            category: transactionCategory
         }
         addTransactionCallback(newTransaction);
         clearState();
@@ -38,6 +40,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
         setTransactionAccountIndex(0);
         setTransactionDescription("");
         setTransactionAmount(0.00);
+        setTransactionCategory("");
     }
 
     return (
@@ -63,6 +66,8 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
                         <input id="transactionDescription" type="text" value={transactionDescription} onChange={(change) => setTransactionDescription(change.target.value)}></input>
                         <label>Amount: </label>
                         <input id="transactionAmount" type="number" value={transactionAmount} onChange={(change) => setTransactionAmount(parseFloat(change.target.value))}></input>
+                        <label>Category: </label>
+                        <input id="transactionCategory" type="text" value={transactionCategory} onChange={(change) => setTransactionCategory(change.target.value)}></input>
                     </>
                 }
                 onSubmit={addTransaction}
