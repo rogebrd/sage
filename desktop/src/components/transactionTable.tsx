@@ -1,12 +1,16 @@
 import React, { FunctionComponent } from "react";
+import { Account } from "../types/account";
 import { Transaction } from "../types/transaction";
 import "../styles/transactionTable.scss";
+import { Button } from "./base/button";
 
 type TransactionTableProps = {
-    transactions: Transaction[]
+    accounts: Account[],
+    transactions: Transaction[],
+    deleteTransactionCallback: Function
 }
 
-export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ transactions }) => {
+export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ accounts, transactions, deleteTransactionCallback }) => {
     return (
         <table className="transaction-table">
             <thead>
@@ -22,8 +26,8 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ tra
             </thead>
             <tbody>
                 {
-                    transactions.map((transaction) => (
-                        <tr className="transaction-table__row">
+                    transactions.map((transaction, index) => (
+                        <tr key={index} className="transaction-table__row">
                             <td className="transaction-table__row--id">
                                 {transaction.id}
                             </td>
@@ -34,7 +38,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ tra
                                 {transaction.vendor}
                             </td>
                             <td className="transaction-table__row--account">
-                                {transaction.account.name}
+                                {accounts[transaction.accountIndex].name}
                             </td>
                             <td className="transaction-table__row--description">
                                 {transaction.description}
@@ -43,7 +47,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ tra
                                 ${transaction.amount}
                             </td>
                             <td className="transaction-table__row--delete">
-                                X
+                                <Button text="X" onClick={() => deleteTransactionCallback(index)} />
                             </td>
                         </tr>
                     ))

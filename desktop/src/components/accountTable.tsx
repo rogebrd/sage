@@ -16,8 +16,8 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
             <table>
                 <tbody>
                     {
-                        accounts.filter((account) => (account.type == 'Cash')).map((account) => (
-                            <AccountTableRow account={account} />
+                        accounts.filter((account) => (account.type === 'Cash')).map((account, index) => (
+                            <AccountTableRow key={index} account={account} />
                         ))
                     }
                 </tbody>
@@ -28,8 +28,8 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
             <table>
                 <tbody>
                     {
-                        accounts.filter((account) => (account.type == 'Investment')).map((account) => (
-                            <AccountTableRow account={account} />
+                        accounts.filter((account) => (account.type === 'Investment')).map((account, index) => (
+                            <AccountTableRow key={index} account={account} />
                         ))
                     }
                 </tbody>
@@ -40,8 +40,8 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
             <table>
                 <tbody>
                     {
-                        accounts.filter((account) => (account.type == 'Liability')).map((account) => (
-                            <AccountTableRow account={account} />
+                        accounts.filter((account) => (account.type === 'Liability')).map((account, index) => (
+                            <AccountTableRow key={index} account={account} />
                         ))
                     }
                 </tbody>

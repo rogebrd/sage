@@ -1,8 +1,10 @@
+import { Account } from './account';
+
 export type Transaction = {
     id: number,
     date: Date,
     vendor: string,
-    account: Account,
+    accountIndex: number,
     description: string,
     amount: number
 }
