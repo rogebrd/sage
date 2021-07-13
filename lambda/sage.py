@@ -9,29 +9,60 @@ print('Loading function')
 
 dynamodb = boto3.client('dynamodb')
 
-def get(event, context):
-    account_table_name = os.getenv("ACCOUNT_TABLE_NAME")
-    transaction_table_name = os.getenv("TRANSACTION_TABLE_NAME")
+def get_home(event, context):
+    account_table_name = get_account_table_name()
+    transaction_table_name = get_transaction_table_name()
 
-    account_table = dynamodb.Table(account_table_name)
-    transaction_table = dynamodb.Table(transaction_table_name)
+    accounts = scan_table(account_table_name)
+    transactions = scan_table(transaction_table_name)
 
-    accounts = scan_table(account_table)
-    transactions = scan_table(transaction_table)
+    response = {
+        'accounts': accounts,
+        'transactions': transactions
+    }
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps(response, indent=4),
+    }
+
+def get_accounts(event, context):
+    account_table_name = get_account_table_name()
+    accounts = scan_table(account_table_name)
 
     return json.dumps(
         {
-            'accounts': accounts,
-            'transactions': transactions
+            'accounts': accounts
         }
     )
 
-def scan_table(table):
-    response = table.scan()
+def add_account(event, context):
+    body = event['body']
+    account_table = get_account_table_name()
+
+
+def scan_table(table_name):
+    response = dynamodb.scan(
+        TableName=table_name
+    )
     data = response['Items']
 
     while 'LastEvaluatedKey' in response:
-        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        response = dynamodb.scan(
+            TableName=table_name,
+            ExclusiveStartKey=response['LastEvaluatedKey']
+        )
         data.extend(response['Items'])
 
     return data
+
+def get_account_table_name():
+    account_table_name = os.getenv("ACCOUNT_TABLE_NAME")
+    return account_table_name
+
+def get_transaction_table_name():
+    transaction_table_name = os.getenv("TRANSACTION_TABLE_NAME")
+    return transaction_table_name

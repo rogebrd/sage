@@ -39,7 +39,7 @@ Resources:
         Variables:
           TRANSACTION_TABLE_NAME: !Ref TransactionTable
           ACCOUNT_TABLE_NAME: !Ref AccountTable
-      Handler: 'lambda/sage.get'
+      Handler: 'sage.get_home'
       Code:
         S3Bucket: sage-codedeployment-bucket
         S3Key: build/sage.zip
@@ -92,13 +92,14 @@ Resources:
         - RootResourceId
       RestApiId: !Ref ApiGateway
       Integration:
-        IntegrationHttpMethod: GET
-        Type: 'AWS'
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
         Uri: !Sub
           - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
           - lambdaArn: !GetAtt
             - SageGetLambda
             - Arn
+
   OptionsMethod:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -139,7 +140,7 @@ Resources:
         - SageGetLambda
         - Arn
       Principal: apigateway.amazonaws.com
-      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/POST/'
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/GET/'
 
   # API Gateway Deployment 
   # last to avoid no method errors
