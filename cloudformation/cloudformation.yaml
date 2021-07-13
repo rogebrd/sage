@@ -80,6 +80,15 @@ Resources:
     Properties:
       Name: Sage
       Description: Sage Gateway
+  
+  ApiResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt 
+        - ApiGateway
+        - RootResourceId
+      PathPart: 'api'
 
   # Get API for main page
   SageGetMethod:
@@ -87,9 +96,7 @@ Resources:
     Properties: 
       HttpMethod: GET
       AuthorizationType: NONE
-      ResourceId: !GetAtt
-        - ApiGateway
-        - RootResourceId
+      ResourceId: !Ref ApiResource
       RestApiId: !Ref ApiGateway
       Integration:
         IntegrationHttpMethod: POST

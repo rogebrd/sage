@@ -10,24 +10,32 @@ print('Loading function')
 dynamodb = boto3.client('dynamodb')
 
 def get_home(event, context):
-    account_table_name = get_account_table_name()
-    transaction_table_name = get_transaction_table_name()
+    try:
+        account_table_name = get_account_table_name()
+        transaction_table_name = get_transaction_table_name()
 
-    accounts = scan_table(account_table_name)
-    transactions = scan_table(transaction_table_name)
+        print('configurations retrieved: %s, %s' % (account_table_name, transaction_table_name))
 
-    response = {
-        'accounts': accounts,
-        'transactions': transactions
-    }
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps(response, indent=4),
-    }
+        accounts = scan_table(account_table_name)
+        transactions = scan_table(transaction_table_name)
+
+        response_body = {
+            'accounts': accounts,
+            'transactions': transactions
+        }
+
+        response = {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps(response_body, indent=4),
+        }
+
+        print('Response: %s' % (response))
+        return response
+    except Exception as e:
+        print(e)
 
 def get_accounts(event, context):
     account_table_name = get_account_table_name()
