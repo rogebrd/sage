@@ -8,18 +8,29 @@ import { formatDate } from "../util/util";
 type TransactionTableProps = {
     accounts: Account[],
     transactions: Transaction[],
-    deleteTransactionCallback: Function
+    deleteTransactionCallback: Function,
+    filter: any,
 }
 
-export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ accounts, transactions, deleteTransactionCallback }) => {
+export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ accounts, transactions, deleteTransactionCallback, filter }) => {
+
+    const filterTransactions = (transaction: Transaction) => {
+        if (!filter) {
+            return true;
+        }
+        if (true) {
+            return accounts[transaction.accountIndex].id === filter.id
+        }
+    }
+
     return (
         <table className="transaction-table">
             <thead>
                 <tr className="transaction-table__header">
                     <th className="transaction-table__header--id">Id</th>
                     <th className="transaction-table__header--date">Date</th>
-                    <th className="transaction-table__header--vendor">Vendor</th>
                     <th className="transaction-table__header--account">Account</th>
+                    <th className="transaction-table__header--vendor">Vendor</th>
                     <th className="transaction-table__header--description">Description</th>
                     <th className="transaction-table__header--amount">Amount</th>
                     <th className="transaction-table__header--category">Category</th>
@@ -28,7 +39,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
             </thead>
             <tbody>
                 {
-                    transactions.map((transaction, index) => (
+                    transactions.filter(filterTransactions).map((transaction, index) => (
                         <tr key={index} className="transaction-table__row">
                             <td className="transaction-table__row--id">
                                 {transaction.id}

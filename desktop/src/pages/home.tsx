@@ -10,6 +10,7 @@ import { AddTransactionModal } from '../components/addTransactionModal';
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [transactionFilter, setTransactionFilter] = useState<any>();
 
     useEffect(() => {
         let accountTotals = Array(accounts.length).fill(0);
@@ -110,12 +111,12 @@ export const HomePage: FunctionComponent = () => {
             <div className="app__content">
                 <div className="app__content__sidebar">
                     <Header text="Accounts" />
-                    <AccountTable accounts={accounts} />
+                    <AccountTable accounts={accounts} selectAccountCallback={setTransactionFilter} />
                     <AddAccountModal addAccountCallback={addAccount} />
                 </div>
                 <div className="app__content__main">
                     <Header text="Transactions" />
-                    <TransactionTable accounts={accounts} transactions={transactions} deleteTransactionCallback={deleteTransaction} />
+                    <TransactionTable accounts={accounts} transactions={transactions} deleteTransactionCallback={deleteTransaction} filter={transactionFilter} />
                     <AddTransactionModal accounts={accounts} addTransactionCallback={addTransaction} />
                 </div>
             </div>

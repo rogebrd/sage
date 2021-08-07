@@ -3,10 +3,11 @@ import { Account } from "../types/account";
 import "../styles/accountTable.scss";
 
 type AccountTableProps = {
-    accounts: Account[]
+    accounts: Account[],
+    selectAccountCallback: Function
 }
 
-export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts }) => {
+export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts, selectAccountCallback }) => {
     return (
         <div className="account-table">
 
@@ -17,7 +18,7 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
                 <tbody>
                     {
                         accounts.filter((account) => (account.type === 'Cash')).map((account, index) => (
-                            <AccountTableRow key={index} account={account} />
+                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
                         ))
                     }
                 </tbody>
@@ -29,7 +30,7 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
                 <tbody>
                     {
                         accounts.filter((account) => (account.type === 'Investment')).map((account, index) => (
-                            <AccountTableRow key={index} account={account} />
+                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
                         ))
                     }
                 </tbody>
@@ -41,7 +42,7 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
                 <tbody>
                     {
                         accounts.filter((account) => (account.type === 'Liability')).map((account, index) => (
-                            <AccountTableRow key={index} account={account} />
+                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
                         ))
                     }
                 </tbody>
@@ -51,12 +52,13 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts })
 }
 
 type AccountTableRowProps = {
-    account: Account
+    account: Account,
+    selectAccountCallback: Function
 }
 
-export const AccountTableRow: FunctionComponent<AccountTableRowProps> = ({ account }) => {
+export const AccountTableRow: FunctionComponent<AccountTableRowProps> = ({ account, selectAccountCallback }) => {
     return (
-        <tr className="account-table__row">
+        <tr className="account-table__row" onClick={() => selectAccountCallback(account)}>
             <td className="account-table__row--id">
                 {account.id}
             </td>
