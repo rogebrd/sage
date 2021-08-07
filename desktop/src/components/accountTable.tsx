@@ -8,6 +8,10 @@ type AccountTableProps = {
 }
 
 export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts, selectAccountCallback }) => {
+
+    const sortAccounts = (account_one: Account, account_two: Account) => {
+        return account_two.balance - account_one.balance;
+    }
     return (
         <div className="account-table">
 
@@ -17,7 +21,7 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts, s
             <table>
                 <tbody>
                     {
-                        accounts.filter((account) => (account.type === 'Cash')).map((account, index) => (
+                        accounts.filter((account) => (account.type === 'Cash')).sort(sortAccounts).map((account, index) => (
                             <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
                         ))
                     }
@@ -29,7 +33,7 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts, s
             <table>
                 <tbody>
                     {
-                        accounts.filter((account) => (account.type === 'Investment')).map((account, index) => (
+                        accounts.filter((account) => (account.type === 'Investment')).sort(sortAccounts).map((account, index) => (
                             <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
                         ))
                     }
@@ -41,7 +45,7 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts, s
             <table>
                 <tbody>
                     {
-                        accounts.filter((account) => (account.type === 'Liability')).map((account, index) => (
+                        accounts.filter((account) => (account.type === 'Liability')).sort(sortAccounts).map((account, index) => (
                             <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
                         ))
                     }

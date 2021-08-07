@@ -68,7 +68,6 @@ export const HomePage: FunctionComponent = () => {
                 date: new Date(),
                 vendor: "Taqueria",
                 accountIndex: 1,
-                description: "Chicken Burrito",
                 amount: 19.99,
                 category: "Food",
             },
@@ -77,7 +76,6 @@ export const HomePage: FunctionComponent = () => {
                 date: new Date(),
                 vendor: "J.C. Deli",
                 accountIndex: 1,
-                description: "Sandwich",
                 amount: 6.54,
                 category: "Food",
             },
@@ -86,7 +84,6 @@ export const HomePage: FunctionComponent = () => {
                 date: new Date(),
                 vendor: "N/A",
                 accountIndex: 0,
-                description: "Initial Balance",
                 amount: 100.00,
                 category: "",
             }

@@ -61,11 +61,6 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
             value_two = transaction_two.vendor;
         }
 
-        if (sorter.startsWith("description")) {
-            value_one = transaction_one.description;
-            value_two = transaction_two.description;
-        }
-
         if (sorter.startsWith("amount")) {
             value_one = transaction_one.amount;
             value_two = transaction_two.amount;
@@ -94,7 +89,6 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
                     <th className="transaction-table__header--date">Date <span onClick={() => updateSorter("date")} >^</span></th>
                     <th className="transaction-table__header--account">Account <span onClick={() => updateSorter("account")} >^</span></th>
                     <th className="transaction-table__header--vendor">Vendor <span onClick={() => updateSorter("vendor")} >^</span></th>
-                    <th className="transaction-table__header--description">Description <span onClick={() => updateSorter("description")} >^</span></th>
                     <th className="transaction-table__header--amount">Amount <span onClick={() => updateSorter("amount")} >^</span></th>
                     <th className="transaction-table__header--category">Category <span onClick={() => updateSorter("category")} >^</span></th>
                     <th className="transaction-table__header--options"></th>
@@ -102,7 +96,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
             </thead>
             <tbody>
                 {
-                    transactions.sort(sortTransactions).filter(filterTransactions).map((transaction, index) => (
+                    transactions.filter(filterTransactions).sort(sortTransactions).map((transaction, index) => (
                         <tr key={index} className="transaction-table__row">
                             <td className="transaction-table__row--id">
                                 {transaction.id}
@@ -115,9 +109,6 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
                             </td>
                             <td className="transaction-table__row--vendor">
                                 {transaction.vendor}
-                            </td>
-                            <td className="transaction-table__row--description">
-                                {transaction.description}
                             </td>
                             <td className="transaction-table__row--amount">
                                 ${transaction.amount}

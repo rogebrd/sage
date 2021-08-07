@@ -14,7 +14,6 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
     const [transactionDate, setTransactionDate] = React.useState(new Date());
     const [transactionVendor, setTransactionVendor] = React.useState("");
     const [transactionAccountIndex, setTransactionAccountIndex] = React.useState(0);
-    const [transactionDescription, setTransactionDescription] = React.useState("");
     const [transactionAmount, setTransactionAmount] = React.useState(0.00);
     const [transactionCategory, setTransactionCategory] = React.useState("");
 
@@ -25,7 +24,6 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
             date: transactionDate,
             vendor: transactionVendor,
             accountIndex: transactionAccountIndex,
-            description: transactionDescription,
             amount: transactionAmount,
             category: transactionCategory
         }
@@ -38,7 +36,6 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
         setTransactionDate(new Date());
         setTransactionVendor("");
         setTransactionAccountIndex(0);
-        setTransactionDescription("");
         setTransactionAmount(0.00);
         setTransactionCategory("");
     }
@@ -62,8 +59,6 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
                                 )
                             }
                         </select>
-                        <label>Description: </label>
-                        <input id="transactionDescription" type="text" value={transactionDescription} onChange={(change) => setTransactionDescription(change.target.value)}></input>
                         <label>Amount: </label>
                         <input id="transactionAmount" type="number" value={transactionAmount} onChange={(change) => setTransactionAmount(parseFloat(change.target.value))}></input>
                         <label>Category: </label>

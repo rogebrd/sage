@@ -3,7 +3,6 @@ export type Transaction = {
     date: Date,
     vendor: string,
     accountIndex: number,
-    description: string,
     amount: number,
     category?: string,
 }
