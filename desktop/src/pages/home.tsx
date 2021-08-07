@@ -10,7 +10,11 @@ import { AddTransactionModal } from '../components/addTransactionModal';
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    // Filter can be any object or function to filter on
     const [transactionFilter, setTransactionFilter] = useState<any>();
+    // Sorter is of the format {field}{?-asending} where if the latter is omitted
+    // it is assumed to be descending
+    const [transactionSorter, setTransactionSorter] = useState<string>("");
 
     useEffect(() => {
         let accountTotals = Array(accounts.length).fill(0);
@@ -116,7 +120,14 @@ export const HomePage: FunctionComponent = () => {
                 </div>
                 <div className="app__content__main">
                     <Header text="Transactions" />
-                    <TransactionTable accounts={accounts} transactions={transactions} deleteTransactionCallback={deleteTransaction} filter={transactionFilter} />
+                    <TransactionTable
+                        accounts={accounts}
+                        transactions={transactions}
+                        deleteTransactionCallback={deleteTransaction}
+                        filter={transactionFilter}
+                        sorter={transactionSorter}
+                        setSorter={setTransactionSorter}
+                    />
                     <AddTransactionModal accounts={accounts} addTransactionCallback={addTransaction} />
                 </div>
             </div>
