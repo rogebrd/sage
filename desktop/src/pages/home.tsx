@@ -2,104 +2,47 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { AccountTable } from '../components/accountTable';
 import { AddAccountModal } from '../components/addAccountModal';
 import { Header } from '../components/base/header';
-import { TransactionTable } from '../components/transactionTable';
 import { Transaction } from '../types/transaction';
-import { Account } from '../types/account';
-import { AddTransactionModal } from '../components/addTransactionModal';
+import { Account, AccountCurrency, AccountType } from '../types/account';
+import { Action } from '../types/action';
+import { sampleAccounts, sampleTransactions, sampleActions } from '../sample';
+import { ActionTable } from '../components/actionTable';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [actions, setActions] = useState<Action[]>([]);
     // Filter can be any object or function to filter on
     const [transactionFilter, setTransactionFilter] = useState<any>();
     // Sorter is of the format {field}{?-asending} where if the latter is omitted
     // it is assumed to be descending
     const [transactionSorter, setTransactionSorter] = useState<string>("");
 
-    useEffect(() => {
-        let accountTotals = Array(accounts.length).fill(0);
-        transactions.forEach((transaction) => {
-            accountTotals[transaction.accountIndex] = accountTotals[transaction.accountIndex] + transaction.amount;
-        });
-        let newAccounts = Array(accounts.length).fill(null);
-        accounts.forEach((account, index) => {
-            newAccounts[index] = account;
-            newAccounts[index].balance = accountTotals[index];
-        });
-        setAccounts(accounts);
-    }, [accounts, transactions]);
+    // useEffect(() => {
+    //     let accountTotals = Array(accounts.length).fill(0);
+    //     transactions.forEach((transaction) => {
+    //         accountTotals[transaction.accountIndex] = accountTotals[transaction.accountIndex] + transaction.amount;
+    //     });
+    //     let newAccounts = Array(accounts.length).fill(null);
+    //     accounts.forEach((account, index) => {
+    //         newAccounts[index] = account;
+    //         newAccounts[index].balance = accountTotals[index];
+    //     });
+    //     setAccounts(accounts);
+    // }, [accounts, transactions]);
 
     useEffect(() => {
-        setAccounts([
-            {
-                id: 1,
-                name: "Cash",
-                balance: 0.0,
-                type: "Cash"
-            },
-            {
-                id: 2,
-                name: "Amex",
-                balance: 0.0,
-                type: "Liability"
-            },
-            {
-                id: 3,
-                name: "Checking",
-                balance: 0.0,
-                type: "Cash"
-            },
-            {
-                id: 4,
-                name: "Savings",
-                balance: 0.0,
-                type: "Cash"
-            },
-            {
-                id: 5,
-                name: "Robinhood",
-                balance: 0.0,
-                type: "Investment"
-            },
-        ]);
-        setTransactions([
-            {
-                id: 1,
-                date: new Date(),
-                vendor: "Taqueria",
-                accountIndex: 1,
-                amount: 19.99,
-                category: "Food",
-            },
-            {
-                id: 2,
-                date: new Date(),
-                vendor: "J.C. Deli",
-                accountIndex: 1,
-                amount: 6.54,
-                category: "Food",
-            },
-            {
-                id: 3,
-                date: new Date(),
-                vendor: "N/A",
-                accountIndex: 0,
-                amount: 100.00,
-                category: "",
-            }
-        ]);
+        setAccounts(sampleAccounts);
+        setTransactions(sampleTransactions);
+        setActions(sampleActions);
     }, []);
 
     const addAccount = (newAccount: Account) => {
         setAccounts([newAccount].concat(accounts));
     };
 
-    const addTransaction = (newTransaction: Transaction) => {
-        setTransactions([newTransaction].concat(transactions));
-    };
-
-    const deleteTransaction = (transactionIndex: number) => {
-        setTransactions(transactions.splice(transactionIndex, 1));
+    const deleteAction = (actionIndex: number) => {
+        setActions(actions.splice(actionIndex, 1));
     };
 
     return (
@@ -117,15 +60,14 @@ export const HomePage: FunctionComponent = () => {
                 </div>
                 <div className="app__content__main">
                     <Header text="Transactions" />
-                    <TransactionTable
+                    <ActionTable
                         accounts={accounts}
-                        transactions={transactions}
-                        deleteTransactionCallback={deleteTransaction}
+                        actions={actions}
+                        deleteActionCallback={deleteAction}
                         filter={transactionFilter}
                         sorter={transactionSorter}
                         setSorter={setTransactionSorter}
                     />
-                    <AddTransactionModal accounts={accounts} addTransactionCallback={addTransaction} />
                 </div>
             </div>
         </div>

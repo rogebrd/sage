@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Account } from "../types/account";
+import { Account, AccountType } from "../types/account";
 import "../styles/accountTable.scss";
 
 type AccountTableProps = {
@@ -14,43 +14,30 @@ export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts, s
     }
     return (
         <div className="account-table">
-
-            <div className="account-table__subheader">
-                Cash
-            </div>
-            <table>
-                <tbody>
-                    {
-                        accounts.filter((account) => (account.type === 'Cash')).sort(sortAccounts).map((account, index) => (
-                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
-                        ))
-                    }
-                </tbody>
-            </table>
-            <div className="account-table__subheader">
-                Investment
-            </div>
-            <table>
-                <tbody>
-                    {
-                        accounts.filter((account) => (account.type === 'Investment')).sort(sortAccounts).map((account, index) => (
-                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
-                        ))
-                    }
-                </tbody>
-            </table>
-            <div className="account-table__subheader">
-                Liability
-            </div>
-            <table>
-                <tbody>
-                    {
-                        accounts.filter((account) => (account.type === 'Liability')).sort(sortAccounts).map((account, index) => (
-                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
-                        ))
-                    }
-                </tbody>
-            </table>
+            {
+                [AccountType.CASH,
+                AccountType.INVESTMENT,
+                AccountType.LIABILITY,
+                AccountType.ALLOWANCE,
+                AccountType.TAX,
+                AccountType.PHYSICAL].map((type) => {
+                    return (
+                        <>
+                            <div className="account-table__subheader">
+                                {type}
+                            </div>
+                            <table>
+                                <tbody>
+                                    {
+                                        accounts.filter((account) => (account.type === type)).sort(sortAccounts).map((account, index) => (
+                                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
+                                        ))
+                                    }
+                                </tbody>
+                            </table>
+                        </>)
+                })
+            }
         </div>
     );
 }
