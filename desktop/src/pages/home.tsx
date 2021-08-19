@@ -5,12 +5,15 @@ import { Header } from '../components/base/header';
 import { Transaction } from '../types/transaction';
 import { Account, AccountCurrency, AccountType } from '../types/account';
 import { Action } from '../types/action';
-import { sampleAccounts, sampleTransactions, sampleActions } from '../sample';
+import { sampleAccounts, sampleTransactions, sampleActions, sampleOrganizations } from '../sample';
 import { ActionTable } from '../components/actionTable';
+import { Sidebar } from '../components/sidebar';
+import { Organization } from '../types/organization';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [organizations, setOrganizations] = useState<Organization[]>([]);
     const [actions, setActions] = useState<Action[]>([]);
     // Filter can be any object or function to filter on
     const [transactionFilter, setTransactionFilter] = useState<any>();
@@ -18,23 +21,11 @@ export const HomePage: FunctionComponent = () => {
     // it is assumed to be descending
     const [transactionSorter, setTransactionSorter] = useState<string>("");
 
-    // useEffect(() => {
-    //     let accountTotals = Array(accounts.length).fill(0);
-    //     transactions.forEach((transaction) => {
-    //         accountTotals[transaction.accountIndex] = accountTotals[transaction.accountIndex] + transaction.amount;
-    //     });
-    //     let newAccounts = Array(accounts.length).fill(null);
-    //     accounts.forEach((account, index) => {
-    //         newAccounts[index] = account;
-    //         newAccounts[index].balance = accountTotals[index];
-    //     });
-    //     setAccounts(accounts);
-    // }, [accounts, transactions]);
-
     useEffect(() => {
         setAccounts(sampleAccounts);
         setTransactions(sampleTransactions);
         setActions(sampleActions);
+        setOrganizations(sampleOrganizations);
     }, []);
 
     const addAccount = (newAccount: Account) => {
@@ -53,11 +44,11 @@ export const HomePage: FunctionComponent = () => {
                 </h1>
             </div>
             <div className="app__content">
-                <div className="app__content__sidebar">
-                    <Header text="Accounts" />
-                    <AccountTable accounts={accounts} selectAccountCallback={setTransactionFilter} />
-                    <AddAccountModal addAccountCallback={addAccount} />
-                </div>
+                <Sidebar
+                    organizations={organizations}
+                    setTransactionFilter={setTransactionFilter}
+                    addAccount={addAccount}
+                />
                 <div className="app__content__main">
                     <Header text="Transactions" />
                     <ActionTable

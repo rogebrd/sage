@@ -16,34 +16,28 @@ body, #root{
   margin: 0;
   padding: 0;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   &__header {
+    width: 100%;
     margin: 0;
-    background: $ming;
-    height: fit-content;
+    background: $light-slate-gray;
+    border-bottom: 1px solid black;
     display: flex;
-    flex-flow: column;
-    border-bottom: 1px solid $resin-black;
 
     &__text {
-      color: $resin-black;
-      text-align: center;
+      font-size: 1.3em;
+      margin: 0.8em;
+      padding: 0;
+      color: $text-main;
     }
   }
 
   &__content {
     display: flex;
     height: 100%;
-
-    &__sidebar {
-      margin: 0;
-      padding: 0;
-      width: 400px;
-      background: $morning-blue;
-      border-right: 1px solid $resin-black;
-      display: flex;
-      flex-direction: column;
-    }
 
     &__main {
       margin: 0;

@@ -1,0 +1,12 @@
+@import 'colors';
+
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 500px;
+    background: $sidebar;
+    display: flex;
+    flex-direction: column;
+    color: $text-main;
+    overflow-y: scroll;
+}

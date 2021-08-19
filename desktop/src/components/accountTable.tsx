@@ -1,41 +1,65 @@
 import React, { FunctionComponent } from "react";
-import { Account, AccountType } from "../types/account";
+import { Account } from "../types/account";
 import "../styles/accountTable.scss";
+import { Organization } from "../types/organization";
+import { formatAccountBalance, formatHeaderBalance } from "../util/util";
 
 type AccountTableProps = {
-    accounts: Account[],
+    organizations: Organization[],
     selectAccountCallback: Function
 }
 
-export const AccountTable: FunctionComponent<AccountTableProps> = ({ accounts, selectAccountCallback }) => {
+export const AccountTable: FunctionComponent<AccountTableProps> = ({ organizations, selectAccountCallback }) => {
+    const [balance, setBalance] = React.useState(0);
 
-    const sortAccounts = (account_one: Account, account_two: Account) => {
-        return account_two.balance - account_one.balance;
-    }
+    const renderAccount = (account: Account, depth: number) => (
+        <>
+            <div className="account-table__organization__account">
+                <span className={`account-table__organization__account--title-${depth}`}>{account.name}</span>
+                <span className="account-table__organization__account--balance">
+                    {formatAccountBalance(account)}
+                </span>
+            </div>
+            <span>
+                {
+
+                    account.childAccounts?.map((child) => {
+                        return renderAccount(child, depth + 1)
+                    })
+                }
+            </span>
+        </>
+    )
+
+    React.useEffect(() => {
+        setBalance(organizations
+            .flatMap((organization) => organization.accounts)
+            .map((account) => account.balance)
+            .reduce((sum, currentBalance) => sum + currentBalance, 0))
+    }, [organizations]);
+
     return (
         <div className="account-table">
             {
-                [AccountType.CASH,
-                AccountType.INVESTMENT,
-                AccountType.LIABILITY,
-                AccountType.ALLOWANCE,
-                AccountType.TAX,
-                AccountType.PHYSICAL].map((type) => {
+                organizations.map((organization) => {
+                    const organizationBalance = organization.accounts.map((account) => account.balance).reduce((sum, currentBalance) => sum + currentBalance, 0);
                     return (
-                        <>
-                            <div className="account-table__subheader">
-                                {type}
+                        <div className="account-table__organization">
+                            <div className="account-table__organization__header">
+                                <span className="account-table__organization__header--title">{organization.name}</span>
+                                <span className="account-table__organization__header--balance">
+                                    <span className={organizationBalance >= 0 ? "positive" : "negative"}>
+                                        {formatHeaderBalance(organizationBalance)}
+                                    </span>
+                                </span>
                             </div>
-                            <table>
-                                <tbody>
-                                    {
-                                        accounts.filter((account) => (account.type === type)).sort(sortAccounts).map((account, index) => (
-                                            <AccountTableRow key={index} account={account} selectAccountCallback={selectAccountCallback} />
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
-                        </>)
+                            {
+                                organization.accounts.map((account) => {
+                                    return (renderAccount(account, 0))
+                                })
+                            }
+                        </div>
+                    )
                 })
             }
         </div>
