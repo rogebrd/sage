@@ -13,15 +13,18 @@ def get_home(event, context):
     try:
         account_table_name = get_account_table_name()
         transaction_table_name = get_transaction_table_name()
+        entry_table_name = get_entry_table_name()
 
-        print('configurations retrieved: %s, %s' % (account_table_name, transaction_table_name))
+        print('configurations retrieved: %s, %s, %s' % (account_table_name, transaction_table_name, entry_table_name))
 
         accounts = scan_table(account_table_name)
         transactions = scan_table(transaction_table_name)
+        entries = scan_table(entry_table_name)
 
         response_body = {
             'accounts': accounts,
-            'transactions': transactions
+            'transactions': transactions,
+            'entries': entries
         }
 
         response = {
@@ -36,20 +39,6 @@ def get_home(event, context):
         return response
     except Exception as e:
         print(e)
-
-def get_accounts(event, context):
-    account_table_name = get_account_table_name()
-    accounts = scan_table(account_table_name)
-
-    return json.dumps(
-        {
-            'accounts': accounts
-        }
-    )
-
-def add_account(event, context):
-    body = event['body']
-    account_table = get_account_table_name()
 
 
 def scan_table(table_name):
@@ -74,3 +63,7 @@ def get_account_table_name():
 def get_transaction_table_name():
     transaction_table_name = os.getenv("TRANSACTION_TABLE_NAME")
     return transaction_table_name
+
+def get_entry_table_name():
+    entry_table_name = os.getenv("ENTRY_TABLE_NAME")
+    return entry_table_name

@@ -1,9 +1,9 @@
 Resources:
-  # Account Database
+  # Account Table
   AccountTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: 'Accounts'
+      TableName: !Sub '${AWS::StackName}-Accounts'
       BillingMode: 'PROVISIONED'
       KeySchema:
         - KeyType: 'HASH'
@@ -15,17 +15,33 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  # Transaction Database
+  # Transaction Table
   TransactionTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: 'Transactions'
+      TableName: !Sub '${AWS::StackName}-Transactions'
       BillingMode: 'PROVISIONED'
       KeySchema:
         - KeyType: 'HASH'
           AttributeName: 'TransactionId'
       AttributeDefinitions:
         - AttributeName: 'TransactionId'
+          AttributeType: 'S'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  # Entry Table
+  EntryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-Entries'
+      BillingMode: 'PROVISIONED'
+      KeySchema:
+        - KeyType: 'HASH'
+          AttributeName: 'EntryId'
+      AttributeDefinitions:
+        - AttributeName: 'EntryId'
           AttributeType: 'S'
       ProvisionedThroughput:
         ReadCapacityUnits: 5
@@ -39,6 +55,7 @@ Resources:
         Variables:
           TRANSACTION_TABLE_NAME: !Ref TransactionTable
           ACCOUNT_TABLE_NAME: !Ref AccountTable
+          ENTRY_TABLE_NAME: !Ref EntryTable
       Handler: 'sage.get_home'
       Code:
         S3Bucket: sage-codedeployment-bucket
