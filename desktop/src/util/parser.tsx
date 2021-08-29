@@ -1,5 +1,5 @@
 import { Account } from "../model/account";
-import { Entry } from "../model/entry";
+import { Entry, StockAmount } from "../model/entry";
 import { AccountCurrency, AccountType, EntryStyle } from "../model/enums";
 import { Transaction } from "../model/transaction";
 
@@ -14,14 +14,11 @@ export const accountFromDynamoDB = (accountRaw: any): Account => {
 }
 
 export const entryFromDynamoDB = (entryRaw: any): Entry => {
-    console.log(entryRaw);
-    console.log(entryRaw.Amount.N);
-    console.log(Number.parseFloat(entryRaw.Amount.N));
     return new Entry({
         id: entryRaw.EntryId.S,
         accountId: entryRaw.AccountId.S,
         style: EntryStyle[entryRaw.Style.S as keyof typeof EntryStyle],
-        amount: Number.parseFloat(entryRaw.Amount.S),
+        amount: parseAmount(entryRaw.Amount.S),
         date: new Date(entryRaw.Date.N),
         category: entryRaw.Category?.S,
         tags: entryRaw.Tags?.S,
@@ -34,4 +31,17 @@ export const transactionFromDynamoDB = (transactionRaw: any): Transaction => {
         id: transactionRaw.TransactionId.S,
         entryIds: transactionRaw.EntryIds.SS
     })
+}
+
+const parseAmount = (amountString: string): number | StockAmount => {
+    try {
+        return Number.parseFloat(amountString);
+    } catch (Execption) {
+        const amountRaw = JSON.parse(amountString);
+        return {
+            quantity: amountRaw.quantity,
+            unitPrice: amountRaw.unitPrice,
+            symbol: amountRaw.symbol
+        };
+    }
 }
