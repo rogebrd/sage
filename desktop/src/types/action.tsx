@@ -34,4 +34,12 @@ export class Action implements ActionOptions {
         this.date = options.date;
         this.category = options.category;
     }
+
+    getAmount() {
+        if (this.style === ActionStyle.CREDIT) {
+            return -1 * this.amount;
+        } else {
+            return this.amount;
+        }
+    }
 }

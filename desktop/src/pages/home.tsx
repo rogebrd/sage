@@ -1,9 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { AccountTable } from '../components/accountTable';
-import { AddAccountModal } from '../components/addAccountModal';
 import { Header } from '../components/base/header';
 import { Transaction } from '../types/transaction';
-import { Account, AccountCurrency, AccountType } from '../types/account';
+import { Account } from '../types/account';
 import { Action } from '../types/action';
 import { sampleAccounts, sampleTransactions, sampleActions, sampleOrganizations } from '../sample';
 import { ActionTable } from '../components/actionTable';

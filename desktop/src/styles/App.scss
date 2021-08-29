@@ -4,7 +4,7 @@ html {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: $light-slate-gray;
+  background-color: #595959;
   height: 100%;
 }
 
@@ -23,13 +23,12 @@ body, #root{
   &__header {
     width: 100%;
     margin: 0;
-    background: $light-slate-gray;
-    border-bottom: 1px solid black;
+    background: $sidebar;
     display: flex;
 
     &__text {
       font-size: 1.3em;
-      margin: 0.8em;
+      margin: 0.3em;
       padding: 0;
       color: $text-main;
     }

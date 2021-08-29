@@ -4,7 +4,7 @@ import { AddAccountModal } from "./addAccountModal"
 import { Header } from "./base/header"
 import { Organization } from "../types/organization";
 import "../styles/sidebar.scss";
-import { AccountSummary } from "./accountSummary";
+import { PortfolioSummary } from "./portfolioSummary";
 
 interface SidebarProps {
     organizations: Organization[],
@@ -15,7 +15,7 @@ interface SidebarProps {
 export const Sidebar: FunctionComponent<SidebarProps> = ({ organizations, setTransactionFilter, addAccount }) => {
     return (
         <div className="sidebar" >
-            <AccountSummary organizations={organizations} />
+            <PortfolioSummary organizations={organizations} />
             <AccountTable organizations={organizations} selectAccountCallback={setTransactionFilter} />
             <AddAccountModal addAccountCallback={addAccount} />
         </div>

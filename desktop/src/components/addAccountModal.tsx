@@ -20,7 +20,8 @@ export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({ addAc
             name: newAccountName,
             balance: 0.0,
             type: AccountType.CASH,
-            currency: AccountCurrency.USD
+            currency: AccountCurrency.USD,
+            actions: []
         })
         addAccountCallback(newAccount);
         clearState();

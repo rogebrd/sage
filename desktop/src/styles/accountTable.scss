@@ -18,8 +18,10 @@
             align-items: center;
             
             &--title {
+                display: flex;
                 font-style: italic;
-                padding-left: 10px;
+                padding-left: 3px;
+                align-items: center;
             }
 
             &--balance {
@@ -52,6 +54,15 @@
                 
                 &-1 {
                     padding-left: 40px;
+                }
+
+                &-icon {
+                    padding-left: 5px;
+
+                    svg {
+                        height: 18px;
+                        width: 18px;
+                    }
                 }
             }
 
