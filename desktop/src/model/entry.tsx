@@ -5,7 +5,7 @@ export interface EntryOptions {
     id: string;
     accountId: string;
     style: EntryStyle;
-    amount: number | StockAmount;
+    amount: number;
     date: Date;
     category?: string;
     tags?: string[];
@@ -34,7 +34,7 @@ export class Entry implements EntryOptions {
     id: string;
     accountId: string;
     style: EntryStyle;
-    amount: number | StockAmount;
+    amount: number;
     date: Date;
     category?: string | undefined;
     tags?: string[] | undefined;
@@ -52,7 +52,7 @@ export class Entry implements EntryOptions {
             return multiplier * this.amount;
         } else {
             // TODO update to reflect appreciation of ticket
-            return multiplier * this.amount.quantity * this.amount.unitPrice;
+            // return multiplier * this.amount.quantity * this.amount.unitPrice;
         }
     }
 

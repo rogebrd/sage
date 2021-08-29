@@ -1,37 +1,48 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Header } from '../components/base/header';
-import { Transaction } from '../types/transaction';
-import { Account } from '../types/account';
-import { Action } from '../types/action';
-import { sampleAccounts, sampleTransactions, sampleActions, sampleOrganizations } from '../sample';
-import { ActionTable } from '../components/actionTable';
+import { Transaction } from '../model/transaction';
+import { Account } from '../model/account';
 import { Sidebar } from '../components/sidebar';
-import { Organization } from '../types/organization';
+import { client } from '../util/axios';
+import { accountFromDynamoDB, entryFromDynamoDB, transactionFromDynamoDB } from '../util/parser';
+import { Entry } from '../model/entry';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
+    const [entries, setEntries] = useState<Entry[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [organizations, setOrganizations] = useState<Organization[]>([]);
-    const [actions, setActions] = useState<Action[]>([]);
-    // Filter can be any object or function to filter on
-    const [transactionFilter, setTransactionFilter] = useState<any>();
-    // Sorter is of the format {field}{?-asending} where if the latter is omitted
-    // it is assumed to be descending
-    const [transactionSorter, setTransactionSorter] = useState<string>("");
 
     useEffect(() => {
-        setAccounts(sampleAccounts);
-        setTransactions(sampleTransactions);
-        setActions(sampleActions);
-        setOrganizations(sampleOrganizations);
+        client.get('/')
+            .then((response) => {
+                let accounts: Account[] = [];
+                let transactions: Transaction[] = [];
+                let entries: Entry[] = [];
+
+                response.data.accounts.forEach((account: string) => {
+                    accounts.push(accountFromDynamoDB(account));
+                });
+
+                response.data.transactions.forEach((transaction: string) => {
+                    transactions.push(transactionFromDynamoDB(transaction));
+                });
+
+                response.data.entries.forEach((entry: string) => {
+                    entries.push(entryFromDynamoDB(entry));
+                });
+
+                setAccounts(accounts);
+                setTransactions(transactions);
+                setEntries(entries);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
     }, []);
+
 
     const addAccount = (newAccount: Account) => {
         setAccounts([newAccount].concat(accounts));
-    };
-
-    const deleteAction = (actionIndex: number) => {
-        setActions(actions.splice(actionIndex, 1));
     };
 
     return (
@@ -43,20 +54,11 @@ export const HomePage: FunctionComponent = () => {
             </div>
             <div className="app__content">
                 <Sidebar
-                    organizations={organizations}
-                    setTransactionFilter={setTransactionFilter}
-                    addAccount={addAccount}
+                    accounts={accounts}
+                    entries={entries}
                 />
                 <div className="app__content__main">
                     <Header text="Transactions" />
-                    <ActionTable
-                        accounts={accounts}
-                        actions={actions}
-                        deleteActionCallback={deleteAction}
-                        filter={transactionFilter}
-                        sorter={transactionSorter}
-                        setSorter={setTransactionSorter}
-                    />
                 </div>
             </div>
         </div>
