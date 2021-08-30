@@ -1,5 +1,5 @@
 import { Entry } from "./entry";
-import { AccountCurrency, AccountType } from "./enums";
+import { AccountType } from "./enums";
 
 export interface TransactionOptions {
     id: string;

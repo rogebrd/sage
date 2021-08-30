@@ -1,6 +1,6 @@
 import { Account } from "../model/account";
 import { Entry, StockAmount } from "../model/entry";
-import { AccountCurrency, AccountType, EntryStyle } from "../model/enums";
+import { AccountCategory, AccountType, EntryStyle } from "../model/enums";
 import { Transaction } from "../model/transaction";
 
 export const accountFromDynamoDB = (accountRaw: any): Account => {
@@ -8,8 +8,9 @@ export const accountFromDynamoDB = (accountRaw: any): Account => {
         id: accountRaw.AccountId.S,
         name: accountRaw.Name.S,
         type: AccountType[accountRaw.Type.S as keyof typeof AccountType],
-        currency: AccountCurrency[accountRaw.Currency.S as keyof typeof AccountCurrency],
-        category: accountRaw.Category?.S
+        category: AccountCategory[accountRaw.Category?.S as keyof typeof AccountCategory],
+        parentAccountId: accountRaw.ParentAccountId?.S,
+        maxValue: parseAmount(accountRaw.MaxValue?.S) as number
     })
 }
 

@@ -6,6 +6,7 @@ import { Sidebar } from '../components/sidebar';
 import { client } from '../util/axios';
 import { accountFromDynamoDB, entryFromDynamoDB, transactionFromDynamoDB } from '../util/parser';
 import { Entry } from '../model/entry';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -49,8 +50,9 @@ export const HomePage: FunctionComponent = () => {
         <div className="app">
             <div className="app__header">
                 <h1 className="app__header__text">
-                    Sage Financial Tracker
+                    Sage
                 </h1>
+                <SettingsOutlinedIcon />
             </div>
             <div className="app__content">
                 <Sidebar

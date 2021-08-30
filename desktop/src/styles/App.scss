@@ -1,11 +1,26 @@
 @import "colors";
+@import "fonts";
 
 html {
+  @include font-p;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #595959;
+  background-color: $sidebar-container;
   height: 100%;
+  color: $text-main;
+}
+
+h1 {
+  @include font-h1
+}
+
+h2 {
+  @include font-h2
+}
+
+p {
+  @include font-p
 }
 
 body, #root{
@@ -16,21 +31,24 @@ body, #root{
   margin: 0;
   padding: 0;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 
   &__header {
     width: 100%;
     margin: 0;
     background: $sidebar;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     &__text {
-      font-size: 1.3em;
       margin: 0.3em;
       padding: 0;
       color: $text-main;
+      margin-left: 50px;
+    }
+
+    svg {
+      margin-right: 10px;
     }
   }
 
@@ -46,4 +64,8 @@ body, #root{
       flex-direction: column;
     }
   }
+}
+
+.negative {
+  color: $text-negative
 }

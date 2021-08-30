@@ -6,10 +6,13 @@ export enum EntryStyle {
 export enum AccountType {
     CASH,
     INVESTMENT,
-    LIABILITY
+    LIABILITY,
+    POINT
 }
 
-export enum AccountCurrency {
-    USD,
-    POINT
+export enum AccountCategory {
+    DAILY,
+    SAVINGS,
+    RETIREMENT,
+    SPECIAL
 }

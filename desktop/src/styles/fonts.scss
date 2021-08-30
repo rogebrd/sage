@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+@mixin font-base {
+    font-family: Roboto;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-align: center;
+}
+
+@mixin font-h1 {
+    @include font-base;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 32.81px;
+}
+
+@mixin font-h2 {
+    @include font-base;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18.75px;
+}
+
+@mixin font-p {
+    @include font-base;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16.41px;
+}
