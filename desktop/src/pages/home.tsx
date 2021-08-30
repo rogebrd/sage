@@ -7,11 +7,15 @@ import { client } from '../util/axios';
 import { accountFromDynamoDB, entryFromDynamoDB, transactionFromDynamoDB } from '../util/parser';
 import { Entry } from '../model/entry';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import { AddAccountModal } from '../components/addAccountModal';
+import { Button } from '@material-ui/core';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [entries, setEntries] = useState<Entry[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+    const [addAccountModalVisibility, setAddAccountModalVisibilty] = useState<boolean>(false);
 
     useEffect(() => {
         client.get('/')
@@ -52,7 +56,7 @@ export const HomePage: FunctionComponent = () => {
                 <h1 className="app__header__text">
                     Sage
                 </h1>
-                <SettingsOutlinedIcon />
+                <Button onClick={() => setAddAccountModalVisibilty(true)}><SettingsOutlinedIcon /></Button>
             </div>
             <div className="app__content">
                 <Sidebar
@@ -63,6 +67,7 @@ export const HomePage: FunctionComponent = () => {
                     <Header text="Transactions" />
                 </div>
             </div>
+            <AddAccountModal visible={addAccountModalVisibility} setVisible={setAddAccountModalVisibilty} accounts={accounts} />
         </div>
     );
 }

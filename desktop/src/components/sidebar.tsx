@@ -13,6 +13,7 @@ import SubdirectoryArrowRightOutlinedIcon from '@material-ui/icons/SubdirectoryA
 import { AccountCategory, AccountType } from "../model/enums";
 import { Star } from "@material-ui/icons";
 import "../styles/sidebar.scss";
+import { prettifyEnum } from "../util/helpers";
 
 interface SidebarProps {
     accounts: Account[],
@@ -29,11 +30,6 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                 amount.toLocaleString('en-US', { maximumFractionDigits: 0 })
             }
         `
-    }
-
-    const fixString = (string: string) => {
-        let s = string.toLowerCase();
-        return s[0].toUpperCase() + s.slice(1)
     }
 
     const getCategories = (accounts: Account[]) => accounts
@@ -135,7 +131,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                                 <div className="sidebar__category">
                                     <h2>
                                         {getIconForCategory(category)}
-                                        {fixString(AccountCategory[category])}
+                                        {prettifyEnum(AccountCategory[category])}
                                     </h2>
                                     <h2>{
                                         categoryValue < 0 ? (
@@ -183,7 +179,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                                 <div className="sidebar__type">
                                     <h2>
                                         {getIconForType(type)}
-                                        {fixString(AccountType[type])}
+                                        {prettifyEnum(AccountType[type])}
                                     </h2>
                                     <h2>
                                         {
