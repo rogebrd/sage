@@ -65,14 +65,33 @@ Resources:
       Timeout: 30
       MemorySize: 128
       Role: !GetAtt
-          - SageGetLambdaInvocationRole
+          - SageLambdaInvocationRole
+          - Arn
+
+  # Sage Create Account Definition
+  SageCreateAccountLambda:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Environment:
+        Variables:
+          ACCOUNT_TABLE_NAME: !Ref AccountTable
+      Handler: 'sage.create_account'
+      Code:
+        S3Bucket: sage-codedeployment-bucket
+        S3Key: build/sage.zip
+      Runtime: python3.7
+      Description: Creates a new account
+      Timeout: 30
+      MemorySize: 128
+      Role: !GetAtt
+          - SageLambdaInvocationRole
           - Arn
 
   # IAM permissions for lambda
-  SageGetLambdaInvocationRole:
+  SageLambdaInvocationRole:
       Type: AWS::IAM::Role
       Properties:
-        Description: Role for lambda for Sage Get
+        Description: Role for lambda for Sage
         AssumeRolePolicyDocument:
           Statement:
             - Action: ['sts:AssumeRole']
@@ -89,7 +108,7 @@ Resources:
                   Effect: Allow
                   Resource: '*'
                 Version: '2012-10-17'
-              PolicyName: SageGetDynamoDbPolicy
+              PolicyName: SageDynamoDbPolicy
   
   # Api Gateway for publishing data
   ApiGateway:
@@ -122,6 +141,23 @@ Resources:
           - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
           - lambdaArn: !GetAtt
             - SageGetLambda
+            - Arn
+
+  # Post API for create account
+  SageCreateAccountMethod:
+    Type: AWS::ApiGateway::Method
+    Properties: 
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ResourceId: !Ref ApiResource
+      RestApiId: !Ref ApiGateway
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt
+            - SageCreateAccountLambda
             - Arn
 
   OptionsMethod:

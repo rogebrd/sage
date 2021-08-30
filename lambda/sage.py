@@ -27,18 +27,44 @@ def get_home(event, context):
             'entries': entries
         }
 
-        response = {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            },
-            'body': json.dumps(response_body, indent=4),
-        }
-
-        print('Response: %s' % (response))
+        response = create_response(200, json.dumps(response_body))
         return response
     except Exception as e:
         print(e)
+
+def create_account(event, context):
+    try:
+        account_table_name = get_account_table_name()
+        print('configurations retrieved: %s' % (account_table_name))
+
+        body = json.loads(event['body'])
+        account = body['account']
+        dynamodb.put_item(
+            TableName=account_table_name,
+            Item={
+                'AccountId': {'S': account.get('id')},
+                'Name': {'S': account.get('name')},
+                'Type': {'S': account.get('type')},
+                'Category': {'S': account.get('category')},
+                'ParentAccountId': {'S': account.get('parentAccountId', "")},
+                'MaxValue': {'S': account.get('maxValue', "")}
+            }
+        )
+
+        return create_response(200, None)
+    except Exception as e:
+        return create_response(500, e)
+
+def create_response(statusCode, body):
+    response = {
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
+    response['statusCode'] = statusCode
+    response['body'] = body
+    print('Response: %s' % (response))
+    return response
 
 
 def scan_table(table_name):
