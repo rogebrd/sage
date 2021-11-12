@@ -1,5 +1,4 @@
 import { Entry } from "./entry";
-import { AccountType } from "./enums";
 
 export interface TransactionOptions {
     id: string;
@@ -17,6 +16,6 @@ export class Transaction implements TransactionOptions {
     entryIds: string[];
 
     getEntries(entries: Entry[]) {
-        return entries.filter((entry) => entry.id in this.entryIds)
+        return entries.filter((entry) => this.entryIds.includes(entry.id))
     }
 }

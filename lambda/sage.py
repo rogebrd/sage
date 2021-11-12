@@ -39,6 +39,7 @@ def create_account(event, context):
 
         body = json.loads(event['body'])
         account = body['account']
+        print('Putting item: {}'.format(account))
         dynamodb.put_item(
             TableName=account_table_name,
             Item={
@@ -50,6 +51,46 @@ def create_account(event, context):
                 'MaxValue': {'S': account.get('maxValue', "")}
             }
         )
+
+        return create_response(200, None)
+    except Exception as e:
+        return create_response(500, e)
+
+def create_transaction(event, context):
+    try:
+        transaction_table_name = get_transaction_table_name()
+        entry_table_name = get_entry_table_name()
+        print('configurations retrieved: %s %s' % (transaction_table_name, entry_table_name))
+
+        body = json.loads(event['body'])
+        transaction = body['transaction']
+        print('Putting item: {}'.format(transaction))
+        dynamodb.put_item(
+            TableName=transaction_table_name,
+            Item={
+                'TransactionId': {'S': transaction.get('id')},
+                'EntryIds': {'SS': transaction.get('entryIds')},
+            }
+        )
+
+        entries = body['entries']
+        for entry in entries:
+            print('Putting item: {}'.format(entry))
+            item = {
+                    'EntryId': {'S': entry.get('id')},
+                    'AccountId': {'S': entry.get('accountId')},
+                    'Style': {'S': entry.get('style')},
+                    'Amount': {'S': entry.get('amount')},
+                    'Date': {'N': entry.get('date')},
+                    'Description': {'S': entry.get('description')},
+                    'Category': {'S': entry.get('category')},
+                }
+            if len(entry.get('tags')) != 0:
+                item['Tags'] = {'SS': entry.get('tags')}
+            dynamodb.put_item(
+                TableName=entry_table_name,
+                Item=item
+            )
 
         return create_response(200, None)
     except Exception as e:

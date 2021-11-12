@@ -1,28 +1,73 @@
 @import "colors";
+@import "fonts";
 
 .transaction-table {
     width: 100%;
-    color: $resin-black;
     border-collapse: collapse;
+    
+    &--header {
+        height: 20px;
 
-    &__header {
-        background: $english-lavender;
-        border-bottom: 1px solid $resin-black;
+        &-debit {
+            background-color: #D4E0D6;
+            box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+            border-radius: 4px;
+            margin-right: 3px;
+        }
+
+        &-credit {
+            background-color: #E0D9D4;
+            box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+        }
     }
 
-    &__row {
-        text-align: center;
+    &__body {
 
-        &--id {
-            width: 5%;
-        }
+        &__row {
+            height: 32px;
+            margin: 0;
+            padding: 0;
 
-        &--date {
-            width: 5%;
-        }
+            &--account {
+                @include font-h2;
+                text-align: left;
+                width: 10%;
+                border-bottom: 1px solid rgba(137, 135, 145, 0.5);
+            }
 
-        &--options {
-            width: 10%;
+            &--date {
+                @include font-p;
+                color: #898791;
+                width: 10%;
+                border-bottom: 1px solid rgba(137, 135, 145, 0.5);
+            }
+    
+            &--debit {
+                background-color: #D4E0D6;
+                box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+                margin-right: 3px;
+                width: 13%;
+            }
+    
+            &--credit {
+                background-color: #E0D9D4;
+                color: #F28018;
+                box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+                width: 13%;
+            }
+
+            &--description {
+                width: 20%;
+                padding-left: 10px;
+            }
+
+            &--tags {
+                width: 20%;
+            }
+
+            &--category {
+                width: 14%;
+            }
         }
     }
 }

@@ -1,27 +1,29 @@
+@import "colors";
+
 .daily {
-    color: #3A5743;
+    color: $daily;
 }
 
 .special {
-    color: #BAACBD;
+    color: $special;
 }
 
 .savings {
-    color: #E40066;
+    color: $savings;
 }
 
 .retirement {
-    color: #329DBF;
+    color: $retirement;
 }
 
 .cash {
-    color: #E1B92B;
+    color: $cash;
 }
 
 .investment {
-    color: #5A8A0B;
+    color: $investment;
 }
 
 .liability {
-    color: #574DC7;
+    color: $liability;
 }

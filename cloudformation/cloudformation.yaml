@@ -87,6 +87,26 @@ Resources:
           - SageLambdaInvocationRole
           - Arn
 
+  # Sage Create Transaction Definition
+  SageCreateTransactionLambda:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Environment:
+        Variables:
+          TRANSACTION_TABLE_NAME: !Ref TransactionTable
+          ENTRY_TABLE_NAME: !Ref EntryTable
+      Handler: 'sage.create_transaction'
+      Code:
+        S3Bucket: sage-codedeployment-bucket
+        S3Key: build/sage.zip
+      Runtime: python3.7
+      Description: Creates a new transaction & entries
+      Timeout: 30
+      MemorySize: 128
+      Role: !GetAtt
+          - SageLambdaInvocationRole
+          - Arn
+
   # IAM permissions for lambda
   SageLambdaInvocationRole:
       Type: AWS::IAM::Role
@@ -126,6 +146,20 @@ Resources:
         - RootResourceId
       PathPart: 'api'
 
+  AccountResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !Ref ApiResource
+      PathPart: 'account'
+
+  TransactionResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !Ref ApiResource
+      PathPart: 'transaction'
+
   # Get API for main page
   SageGetMethod:
     Type: AWS::ApiGateway::Method
@@ -149,7 +183,7 @@ Resources:
     Properties: 
       HttpMethod: POST
       AuthorizationType: NONE
-      ResourceId: !Ref ApiResource
+      ResourceId: !Ref AccountResource
       RestApiId: !Ref ApiGateway
       Integration:
         IntegrationHttpMethod: POST
@@ -159,15 +193,88 @@ Resources:
           - lambdaArn: !GetAtt
             - SageCreateAccountLambda
             - Arn
+  
+  # Post API for create transaction
+  SageCreateTransactiontMethod:
+    Type: AWS::ApiGateway::Method
+    Properties: 
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ResourceId: !Ref TransactionResource
+      RestApiId: !Ref ApiGateway
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt
+            - SageCreateTransactionLambda
+            - Arn
 
-  OptionsMethod:
+  ApiOptionsMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       HttpMethod: OPTIONS
       AuthorizationType: NONE
-      ResourceId: !GetAtt
-        - ApiGateway
-        - RootResourceId
+      ResourceId: !Ref ApiResource
+      RestApiId: !Ref ApiGateway
+      Integration:
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: "{'statusCode': 200}"
+        Type: MOCK
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: false
+              method.response.header.Access-Control-Allow-Methods: false
+              method.response.header.Access-Control-Allow-Origin: false
+  
+  AccountOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ResourceId: !Ref AccountResource
+      RestApiId: !Ref ApiGateway
+      Integration:
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: "{'statusCode': 200}"
+        Type: MOCK
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: false
+              method.response.header.Access-Control-Allow-Methods: false
+              method.response.header.Access-Control-Allow-Origin: false
+
+  TransactionOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ResourceId: !Ref TransactionResource
       RestApiId: !Ref ApiGateway
       Integration:
         IntegrationResponses:
@@ -207,7 +314,7 @@ Resources:
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
     DependsOn:
-      - "OptionsMethod"
+      - "ApiOptionsMethod"
     Properties:
       RestApiId: !Ref ApiGateway
       StageName: prod

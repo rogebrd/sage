@@ -2,11 +2,11 @@ import { Account } from "./account";
 import { EntryStyle } from "./enums";
 
 export interface EntryOptions {
-    id: string;
-    accountId: string;
-    style: EntryStyle;
-    amount: number | StockAmount;
-    date: Date;
+    id?: string;
+    accountId?: string;
+    style?: EntryStyle;
+    amount?: number | StockAmount;
+    date?: number;
     category?: string;
     tags?: string[];
     description?: string;
@@ -21,6 +21,10 @@ export interface StockAmount {
 export class Entry implements EntryOptions {
 
     constructor(options: EntryOptions) {
+        if (!options.id || !options.accountId || options.style === undefined || !options.amount || options.date === undefined) {
+            throw new Error(``);
+        }
+
         this.id = options.id;
         this.accountId = options.accountId;
         this.style = options.style;
@@ -35,14 +39,14 @@ export class Entry implements EntryOptions {
     accountId: string;
     style: EntryStyle;
     amount: number | StockAmount;
-    date: Date;
+    date: number;
     category?: string | undefined;
     tags?: string[] | undefined;
     description?: string | undefined;
 
     getValue(date: Date) {
         // Return for date before this entry took place
-        if (date < this.date) {
+        if (date < new Date(this.date)) {
             return 0;
         }
 

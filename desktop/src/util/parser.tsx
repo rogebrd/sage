@@ -20,9 +20,9 @@ export const entryFromDynamoDB = (entryRaw: any): Entry => {
         accountId: entryRaw.AccountId.S,
         style: EntryStyle[entryRaw.Style.S as keyof typeof EntryStyle],
         amount: parseAmount(entryRaw.Amount.S),
-        date: new Date(entryRaw.Date.N),
+        date: Number.parseInt(entryRaw.Date.N),
         category: entryRaw.Category?.S,
-        tags: entryRaw.Tags?.S,
+        tags: entryRaw.Tags?.SS,
         description: entryRaw.Description?.S,
     })
 }

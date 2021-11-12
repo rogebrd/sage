@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Account } from "../model/account";
 import { Entry } from "../model/entry";
-import { Container } from "@material-ui/core";
 import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 import LoyaltyOutlinedIcon from '@material-ui/icons/LoyaltyOutlined';
 import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutlined'
@@ -13,7 +12,8 @@ import SubdirectoryArrowRightOutlinedIcon from '@material-ui/icons/SubdirectoryA
 import { AccountCategory, AccountType } from "../model/enums";
 import { Star } from "@material-ui/icons";
 import "../styles/sidebar.scss";
-import { prettifyEnum } from "../util/helpers";
+import { getAmountString, prettifyEnum } from "../util/helpers";
+import { Card } from "./base/card";
 
 interface SidebarProps {
     accounts: Account[],
@@ -22,15 +22,6 @@ interface SidebarProps {
 
 export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) => {
     const [netWorth, setNetWorth] = useState<number>(0);
-
-    const getAmountString = (amount: number, type: AccountType) => {
-        return `
-        ${amount < 0 ? '-' : ''}${type !== AccountType.POINT ? '$' : ''}${type !== AccountType.POINT ?
-                Math.abs(amount).toLocaleString('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 2 }) :
-                amount.toLocaleString('en-US', { maximumFractionDigits: 0 })
-            }
-        `
-    }
 
     const getCategories = (accounts: Account[]) => accounts
         .map((account) => account.category)
@@ -70,7 +61,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
     }
 
     const renderAccount = (account: Account, isChildAccount: boolean = false) => (
-        <div className="sidebar__accounts--account">
+        <div key={account.id} className="sidebar__accounts--account">
             <p>
                 {
                     isChildAccount ? childAccountIcon : null
@@ -80,7 +71,11 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
             <p>
                 {getAmountString(account.getValue(entries), account.type)}
                 {
-                    account.maxValue ? (`/ ${getAmountString(account.maxValue, account.type)}`) : null
+                    account.maxValue ? (
+                        <span className="subtext">
+                            rem.
+                        </span>
+                    ) : null
                 }
                 {
                     account.type === AccountType.POINT ? pointIcon : null
@@ -97,7 +92,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
             return -1;
         }
 
-        return a.name > b.name ? 1 : -1;
+        return Math.abs(b.getValue(entries)) - Math.abs(a.getValue(entries));
     }
 
     useEffect(() => {
@@ -108,34 +103,44 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
 
     return (
         <div className="sidebar" >
-            <Container className="sidebar__container">
-                <div className="sidebar__container--holder">
-                    <span className="sidebar__total">
-                        <h1>${Math.floor(netWorth).toLocaleString('en-US')}</h1>
-                        <h2>.{
-                            Math.round((netWorth - Math.floor(netWorth)) * 100).toLocaleString('en-US')
-                        }
-                        </h2>
-                    </span>
-                </div>
-            </Container>
-            <Container className="sidebar__container">
-                <div className="sidebar__container--holder">
-                    {
-                        getCategories(accounts).sort().map((category) => {
-                            const categoryValue = accounts.
-                                filter((account) => account.category === category)
-                                .map((account) => account.getValue(entries))
-                                .reduce((total: number, current: number) => total + current, 0);
-                            return (
-                                <div className="sidebar__category">
-                                    <h2>
-                                        {getIconForCategory(category)}
-                                        {prettifyEnum(AccountCategory[category])}
-                                    </h2>
-                                    <h2>{
-                                        categoryValue < 0 ? (
-                                            <span className="negative">
+            <Card>
+                <span className="sidebar__total">
+                    <h1>${Math.floor(netWorth).toLocaleString('en-US')}</h1>
+                    <h2>.{
+                        Math.round((netWorth - Math.floor(netWorth)) * 100).toLocaleString('en-US')
+                    }
+                    </h2>
+                </span>
+            </Card>
+            <Card>
+                {
+                    getCategories(accounts).sort().map((category) => {
+                        const categoryValue = accounts
+                            .filter((account) => account.category === category)
+                            .map((account) => account.getValue(entries))
+                            .reduce((total: number, current: number) => total + current, 0);
+                        return (
+                            <div key={category} className="sidebar__category">
+                                <h2>
+                                    {getIconForCategory(category)}
+                                    {prettifyEnum(AccountCategory[category])}
+                                </h2>
+                                <h2>{
+                                    categoryValue < 0 ? (
+                                        <span className="negative">
+                                            {
+                                                getAmountString(
+                                                    categoryValue,
+                                                    (category === AccountCategory.SPECIAL) ? AccountType.POINT : AccountType.CASH
+                                                )
+                                            }
+                                            {
+                                                category === AccountCategory.SPECIAL ? pointIcon : null
+                                            }
+                                        </span>
+                                    ) :
+                                        (
+                                            <>
                                                 {
                                                     getAmountString(
                                                         categoryValue,
@@ -145,28 +150,14 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                                                 {
                                                     category === AccountCategory.SPECIAL ? pointIcon : null
                                                 }
-                                            </span>
-                                        ) :
-                                            (
-                                                <>
-                                                    {
-                                                        getAmountString(
-                                                            categoryValue,
-                                                            (category === AccountCategory.SPECIAL) ? AccountType.POINT : AccountType.CASH
-                                                        )
-                                                    }
-                                                    {
-                                                        category === AccountCategory.SPECIAL ? pointIcon : null
-                                                    }
-                                                </>
-                                            )
-                                    }</h2>
-                                </div>
-                            )
-                        })
-                    }
-                </div>
-            </Container>
+                                            </>
+                                        )
+                                }</h2>
+                            </div>
+                        )
+                    })
+                }
+            </Card>
             {
                 [AccountType.CASH, AccountType.INVESTMENT, AccountType.LIABILITY].map((type) => {
                     const typeAccounts = accounts.filter((account) => account.type === type).filter((account) => !account.parentAccountId).sort(sortAccounts);
@@ -174,44 +165,42 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                         .map((account) => account.getValue(entries))
                         .reduce((total: number, current: number) => total + current, 0);
                     return (
-                        <Container className="sidebar__container">
-                            <div className="sidebar__container--holder">
-                                <div className="sidebar__type">
-                                    <h2>
-                                        {getIconForType(type)}
-                                        {prettifyEnum(AccountType[type])}
-                                    </h2>
-                                    <h2>
-                                        {
-                                            typeValue < 0 ? (
-                                                <span className="negative">
-                                                    {getAmountString(typeValue, AccountType.CASH)}
-                                                </span>
-                                            ) :
-                                                getAmountString(typeValue, AccountType.CASH)
-                                        }
-                                    </h2>
-                                </div>
-                                <div className="sidebar__accounts">
+                        <Card key={type}>
+                            <div className="sidebar__type">
+                                <h2>
+                                    {getIconForType(type)}
+                                    {prettifyEnum(AccountType[type])}
+                                </h2>
+                                <h2>
                                     {
-                                        typeAccounts.map((account) => (
-                                            <>
-                                                {
-                                                    renderAccount(account)
-                                                }
-                                                {
-                                                    account.getChildAccounts(accounts).length > 0 ? account.getChildAccounts(accounts)
-                                                        .sort(sortAccounts)
-                                                        .map((childAccount) => {
-                                                            return renderAccount(childAccount, true);
-                                                        }) : null
-                                                }
-                                            </>
-                                        ))
+                                        typeValue < 0 ? (
+                                            <span className="negative">
+                                                {getAmountString(typeValue, AccountType.CASH)}
+                                            </span>
+                                        ) :
+                                            getAmountString(typeValue, AccountType.CASH)
                                     }
-                                </div>
+                                </h2>
                             </div>
-                        </Container>
+                            <div className="sidebar__accounts">
+                                {
+                                    typeAccounts.map((account) => (
+                                        <>
+                                            {
+                                                renderAccount(account)
+                                            }
+                                            {
+                                                account.getChildAccounts(accounts).length > 0 ? account.getChildAccounts(accounts)
+                                                    .sort(sortAccounts)
+                                                    .map((childAccount) => {
+                                                        return renderAccount(childAccount, true);
+                                                    }) : null
+                                            }
+                                        </>
+                                    ))
+                                }
+                            </div>
+                        </Card>
                     )
                 })
             }

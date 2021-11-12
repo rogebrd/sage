@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Header } from '../components/base/header';
 import { Transaction } from '../model/transaction';
 import { Account } from '../model/account';
 import { Sidebar } from '../components/sidebar';
@@ -9,6 +8,9 @@ import { Entry } from '../model/entry';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import { AddAccountModal } from '../components/addAccountModal';
 import { Button } from '@material-ui/core';
+import { NetWorthGraph } from '../components/netWorthGraph';
+import { TransactionTable } from '../components/transactionTable';
+import { AddTransactionModal } from '../components/addTransactionModal';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -16,6 +18,7 @@ export const HomePage: FunctionComponent = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
 
     const [addAccountModalVisibility, setAddAccountModalVisibilty] = useState<boolean>(false);
+    const [addTransactionModalVisibility, setAddTransactionModalVisibility] = useState<boolean>(false);
 
     useEffect(() => {
         client.get('/')
@@ -45,18 +48,14 @@ export const HomePage: FunctionComponent = () => {
             })
     }, []);
 
-
-    const addAccount = (newAccount: Account) => {
-        setAccounts([newAccount].concat(accounts));
-    };
-
     return (
         <div className="app">
             <div className="app__header">
                 <h1 className="app__header__text">
                     Sage
                 </h1>
-                <Button onClick={() => setAddAccountModalVisibilty(true)}><SettingsOutlinedIcon /></Button>
+                <Button onClick={() => setAddAccountModalVisibilty(true)}>A<SettingsOutlinedIcon /></Button>
+                <Button onClick={() => setAddTransactionModalVisibility(true)}>T<SettingsOutlinedIcon /></Button>
             </div>
             <div className="app__content">
                 <Sidebar
@@ -64,10 +63,36 @@ export const HomePage: FunctionComponent = () => {
                     entries={entries}
                 />
                 <div className="app__content__main">
-                    <Header text="Transactions" />
+                    <NetWorthGraph accounts={accounts} entries={entries} />
+                    <TransactionTable
+                        accounts={accounts}
+                        entries={entries}
+                        transactions={transactions}
+                        updatedTransactionCallback={(transaction: Transaction) => { setTransactions(transactions.map((t) => t.id === transaction.id ? transaction : t)) }}
+                        updatedEntryCallback={(updatedEntries: Entry[]) => {
+                            setEntries(entries.map((entry) => {
+                                const updated = updatedEntries.find((updatedEntry) => updatedEntry.id === entry.id);
+                                return updated ? updated : entry;
+                            }))
+                        }}
+                    />
                 </div>
             </div>
-            <AddAccountModal visible={addAccountModalVisibility} setVisible={setAddAccountModalVisibilty} accounts={accounts} />
+            <AddAccountModal
+                visible={addAccountModalVisibility}
+                setVisible={setAddAccountModalVisibilty}
+                accounts={accounts}
+                newAccountCallback={(account: Account) => setAccounts(accounts.concat(account))}
+            />
+            <AddTransactionModal
+                visible={addTransactionModalVisibility}
+                setVisible={setAddTransactionModalVisibility}
+                accounts={accounts}
+                entries={entries}
+                transactions={transactions}
+                newTransactionCallback={(transaction: Transaction) => { setTransactions(transactions.concat(transaction)) }}
+                newEntryCallback={(newEntries: Entry[]) => { setEntries(entries.concat(newEntries)) }}
+            />
         </div>
     );
 }

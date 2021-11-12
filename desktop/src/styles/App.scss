@@ -6,7 +6,7 @@ html {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: $sidebar-container;
+  background-color: $sidebar;
   height: 100%;
   color: $text-main;
 }
@@ -27,6 +27,10 @@ body, #root{
   height: 100%;
 }
 
+.subtext {
+  @include font-subtext;
+}
+
 .app {
   margin: 0;
   padding: 0;
@@ -41,6 +45,9 @@ body, #root{
     align-items: center;
 
     &__text {
+      @include font-title;
+      color: #444340;
+      box-shadow: 0px 4px 5px 0px #F6F4F140 inset;
       margin: 0.3em;
       padding: 0;
       color: $text-main;
@@ -54,7 +61,6 @@ body, #root{
 
   &__content {
     display: flex;
-    height: 100%;
 
     &__main {
       margin: 0;
@@ -76,22 +82,18 @@ body, #root{
   align-items: center;
   margin: 0;
   padding: 0;
+  background-color: transparent;
 
-  &__addAccount {
-    margin: 0;
+  &__content {
     padding: 0;
-    background-color: $sidebar;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    &__content {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      background-color: $sidebar-container;
-      width: 350px;
-      margin: 16px;
+    border-radius: 4px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+    justify-content: flex-start;
+    background-color: $sidebar-container;
+    margin: 16px;
 
       &--header {
         display: flex;
@@ -138,4 +140,17 @@ body, #root{
       }
     }
   }
+
+
+.card {
+  padding: 12px;
+  margin: 0;
+
+  &--holder {
+    background-color: $sidebar-container;
+    border-radius: 4px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+    padding: 16px;
+  }
 }
+
