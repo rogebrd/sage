@@ -61,6 +61,7 @@ body, #root{
 
   &__content {
     display: flex;
+    height: calc(100vh - 56px);;
 
     &__main {
       margin: 0;
