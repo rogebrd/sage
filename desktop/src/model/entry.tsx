@@ -21,7 +21,7 @@ export interface StockAmount {
 export class Entry implements EntryOptions {
 
     constructor(options: EntryOptions) {
-        if (!options.id || !options.accountId || options.style === undefined || !options.amount || options.date === undefined) {
+        if (!options.id || !options.accountId || options.style === undefined || options.amount === undefined || options.date === undefined) {
             throw new Error(``);
         }
 
