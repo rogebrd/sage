@@ -1,17 +1,16 @@
-FROM ubuntu:16.04
-
-MAINTANER Brad Rogers "brad12rogers@gmail.com"
-
-RUN apt-get update -y && \ apt-get install -y python-pip python-dev
-
-COPY ./requirements.txt /app/requirements.txt
-
-WORKDIR /app
-
-RUN pip install -r requirements.txt
-
-COPY . /app
-
-ENTRYPOINT [ "python" ]
-
-CMD [ "app.py" ]
+version: "3"
+services:
+  web:
+    build: .
+    entrypoint: python
+    command: app.py
+    environment:
+      FLASK_DEBUG: 1
+      FLASK_APP: app.py
+      ACCOUNT_TABLE_NAME: sage-development-Accounts
+      TRANSACTION_TABLE_NAME: sage-development-Transactions
+      ENTRY_TABLE_NAME: sage-development-Entries
+      AWS_ACCESS_KEY_ID: null
+      AWS_SECRET_ACCESS_KEY: null
+    ports: [ '5000:5000' ]
+    volumes: [ './:/app' ]

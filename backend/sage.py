@@ -7,15 +7,15 @@ import os
 
 print('Loading function')
 
-dynamodb = boto3.client('dynamodb')
+dynamodb = boto3.client('dynamodb', region_name='us-west-2')
 
-def get_home(event, context):
+def get_home(logger):
     try:
         account_table_name = get_account_table_name()
         transaction_table_name = get_transaction_table_name()
         entry_table_name = get_entry_table_name()
 
-        print('configurations retrieved: %s, %s, %s' % (account_table_name, transaction_table_name, entry_table_name))
+        logger.info('configurations retrieved: %s, %s, %s' % (account_table_name, transaction_table_name, entry_table_name))
 
         accounts = scan_table(account_table_name)
         transactions = scan_table(transaction_table_name)
@@ -27,19 +27,19 @@ def get_home(event, context):
             'entries': entries
         }
 
-        response = create_response(200, json.dumps(response_body))
+        response = json.dumps(response_body)
         return response
     except Exception as e:
-        print(e)
+        logger.error(e)
 
-def create_account(event, context):
+def create_account(account, logger):
     try:
         account_table_name = get_account_table_name()
-        print('configurations retrieved: %s' % (account_table_name))
+        logger.info('configurations retrieved: %s' % (account_table_name))
 
-        body = json.loads(event['body'])
+        body = json.loads(account)
         account = body['account']
-        print('Putting item: {}'.format(account))
+        logger.info('Putting item: {}'.format(account))
         dynamodb.put_item(
             TableName=account_table_name,
             Item={
@@ -52,19 +52,19 @@ def create_account(event, context):
             }
         )
 
-        return create_response(200, None)
+        return None
     except Exception as e:
-        return create_response(500, e)
+        logger.error(e)
 
-def create_transaction(event, context):
+def create_transaction(transaction, logger):
     try:
         transaction_table_name = get_transaction_table_name()
         entry_table_name = get_entry_table_name()
-        print('configurations retrieved: %s %s' % (transaction_table_name, entry_table_name))
+        logger.info('configurations retrieved: %s %s' % (transaction_table_name, entry_table_name))
 
-        body = json.loads(event['body'])
+        body = json.loads(transaction)
         transaction = body['transaction']
-        print('Putting item: {}'.format(transaction))
+        logger.info('Putting item: {}'.format(transaction))
         dynamodb.put_item(
             TableName=transaction_table_name,
             Item={
@@ -75,7 +75,7 @@ def create_transaction(event, context):
 
         entries = body['entries']
         for entry in entries:
-            print('Putting item: {}'.format(entry))
+            logger.info('Putting item: {}'.format(entry))
             item = {
                     'EntryId': {'S': entry.get('id')},
                     'AccountId': {'S': entry.get('accountId')},
@@ -92,20 +92,9 @@ def create_transaction(event, context):
                 Item=item
             )
 
-        return create_response(200, None)
+        return None
     except Exception as e:
-        return create_response(500, e)
-
-def create_response(statusCode, body):
-    response = {
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        }
-    response['statusCode'] = statusCode
-    response['body'] = body
-    print('Response: %s' % (response))
-    return response
+        logger.error(e)
 
 
 def scan_table(table_name):

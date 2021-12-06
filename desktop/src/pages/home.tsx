@@ -38,6 +38,7 @@ export const HomePage: FunctionComponent = () => {
                 });
 
                 response.data.entries.forEach((rawEntry: string) => {
+                    console.log(rawEntry);
                     entries.push(entryFromDynamoDB(rawEntry));
                 });
 
