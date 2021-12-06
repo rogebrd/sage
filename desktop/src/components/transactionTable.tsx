@@ -1,9 +1,9 @@
 import React, { useState, FunctionComponent } from "react";
 import { Account } from "../model/account";
-import { Entry } from "../model/entry";
+import { Entry, StockAmount } from "../model/entry";
 import { EntryStyle } from "../model/enums";
 import { Transaction } from "../model/transaction";
-import { formatDate, getAmountString } from "../util/helpers";
+import { formatDate, getAmountString, getStockAmountString } from "../util/helpers";
 import { Card } from "./base/card";
 import "../styles/transactionTable.scss";
 import { Button } from "@material-ui/core";
@@ -21,13 +21,20 @@ type TransactionTableProps = {
 export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ accounts, transactions, entries, updatedTransactionCallback, updatedEntryCallback }) => {
     const [editTransactionModalVisibility, setEditTransactionModalVisibility] = useState(false);
 
+    const renderAmount = (entry: Entry) => {
+        if (typeof entry.amount === 'number') {
+            return getAmountString(entry.getValue(new Date(entry.date)), entry.getAccount(accounts)?.type);
+        } else {
+            return getStockAmountString(entry.amount);
+        }
+    }
 
     const renderTransaction = (transaction: Transaction) => (
         <Card key={transaction.id}>
             <table className="transaction-table">
                 <thead className="transaction-table--header">
                     <tr>
-                        <td></td>
+                        <td>{transaction.id}</td>
                         <td></td>
                         <td className="transaction-table--header-debit">debit</td>
                         <td className="transaction-table--header-credit">credit</td>
@@ -42,8 +49,8 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
                             <tr key={entry.id} className="transaction-table__body__row">
                                 <td className="transaction-table__body__row--account">{accounts.find((account) => account.id === entry.accountId)?.name}</td>
                                 <td className="transaction-table__body__row--date">{formatDate(new Date(entry.date))}</td>
-                                <td className="transaction-table__body__row--debit">{entry.style === EntryStyle.DEBIT ? getAmountString(entry.getValue(new Date()), entry.getAccount(accounts).type) : ''}</td>
-                                <td className="transaction-table__body__row--credit">{entry.style === EntryStyle.CREDIT ? getAmountString(entry.getValue(new Date()), entry.getAccount(accounts).type) : ''}</td>
+                                <td className="transaction-table__body__row--debit">{entry.style === EntryStyle.DEBIT ? renderAmount(entry) : ''}</td>
+                                <td className="transaction-table__body__row--credit">{entry.style === EntryStyle.CREDIT ? renderAmount(entry) : ''}</td>
                                 <td className="transaction-table__body__row--description">{entry.description}</td>
                                 <td className="transaction-table__body__row--tags">{entry.tags}</td>
                                 <td className="transaction-table__body__row--category">{entry.category ? entry.category : 'N/A'}</td>

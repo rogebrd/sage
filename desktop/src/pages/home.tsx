@@ -11,11 +11,13 @@ import { Button } from '@material-ui/core';
 import { NetWorthGraph } from '../components/netWorthGraph';
 import { TransactionTable } from '../components/transactionTable';
 import { AddTransactionModal } from '../components/addTransactionModal';
+import { fetchStockPrices } from '../util/stockTracker';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [entries, setEntries] = useState<Entry[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [stockPrices, setStockPrices] = useState<{}>({});
 
     const [addAccountModalVisibility, setAddAccountModalVisibilty] = useState<boolean>(false);
     const [addTransactionModalVisibility, setAddTransactionModalVisibility] = useState<boolean>(false);
@@ -35,10 +37,11 @@ export const HomePage: FunctionComponent = () => {
                     transactions.push(transactionFromDynamoDB(transaction));
                 });
 
-                response.data.entries.forEach((entry: string) => {
-                    entries.push(entryFromDynamoDB(entry));
+                response.data.entries.forEach((rawEntry: string) => {
+                    entries.push(entryFromDynamoDB(rawEntry));
                 });
 
+                setStockPrices(fetchStockPrices(entries, stockPrices));
                 setAccounts(accounts);
                 setTransactions(transactions);
                 setEntries(entries);
@@ -61,6 +64,7 @@ export const HomePage: FunctionComponent = () => {
                 <Sidebar
                     accounts={accounts}
                     entries={entries}
+                    stockPrices={stockPrices}
                 />
                 <div className="app__content__main">
                     <NetWorthGraph accounts={accounts} entries={entries} />
@@ -90,8 +94,8 @@ export const HomePage: FunctionComponent = () => {
                 accounts={accounts}
                 entries={entries}
                 transactions={transactions}
-                newTransactionCallback={(transaction: Transaction) => { setTransactions(transactions.concat(transaction)) }}
-                newEntryCallback={(newEntries: Entry[]) => { setEntries(entries.concat(newEntries)) }}
+                newTransactionCallback={(transaction: Transaction) => { transactions.length !== 0 ? setTransactions(transactions.concat(transaction)) : setTransactions([transaction]) }}
+                newEntryCallback={(newEntries: Entry[]) => { entries.length !== 0 ? setEntries(entries.concat(newEntries)) : setEntries(newEntries) }}
             />
         </div>
     );

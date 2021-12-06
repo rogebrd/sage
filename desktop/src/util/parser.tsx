@@ -10,7 +10,7 @@ export const accountFromDynamoDB = (accountRaw: any): Account => {
         type: AccountType[accountRaw.Type.S as keyof typeof AccountType],
         category: AccountCategory[accountRaw.Category?.S as keyof typeof AccountCategory],
         parentAccountId: accountRaw.ParentAccountId?.S,
-        maxValue: parseAmount(accountRaw.MaxValue?.S) as number
+        maxValue: Number.parseFloat(accountRaw.MaxValue?.S)
     })
 }
 
@@ -35,13 +35,15 @@ export const transactionFromDynamoDB = (transactionRaw: any): Transaction => {
 }
 
 const parseAmount = (amountString: string): number | StockAmount => {
-    try {
-        return Number.parseFloat(amountString);
-    } catch (Execption) {
+    const asFloat = Number.parseFloat(amountString);
+    if (!isNaN(asFloat)) {
+        return asFloat;
+    } else {
+        amountString = amountString.replaceAll("'", "\"");
         const amountRaw = JSON.parse(amountString);
         return {
-            quantity: amountRaw.quantity,
-            unitPrice: amountRaw.unitPrice,
+            quantity: Number.parseFloat(amountRaw.quantity),
+            unitPrice: Number.parseFloat(amountRaw.unitPrice),
             symbol: amountRaw.symbol
         };
     }

@@ -80,7 +80,7 @@ def create_transaction(event, context):
                     'EntryId': {'S': entry.get('id')},
                     'AccountId': {'S': entry.get('accountId')},
                     'Style': {'S': entry.get('style')},
-                    'Amount': {'S': entry.get('amount')},
+                    'Amount': {'S': str(entry.get('amount'))},
                     'Date': {'N': entry.get('date')},
                     'Description': {'S': entry.get('description')},
                     'Category': {'S': entry.get('category')},

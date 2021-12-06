@@ -61,13 +61,14 @@ body, #root{
 
   &__content {
     display: flex;
-    height: calc(100vh - 56px);;
+    height: calc(100vh - 56px);
 
     &__main {
       margin: 0;
       padding: 0;
       width: 100%;
       display: flex;
+      overflow-y: scroll;
       flex-direction: column;
     }
   }

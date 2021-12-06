@@ -44,7 +44,7 @@ export class Entry implements EntryOptions {
     tags?: string[] | undefined;
     description?: string | undefined;
 
-    getValue(date: Date) {
+    getValue(date: Date, stockPrices?: any) {
         // Return for date before this entry took place
         if (date < new Date(this.date)) {
             return 0;
@@ -56,7 +56,8 @@ export class Entry implements EntryOptions {
             return multiplier * this.amount;
         } else {
             // TODO update to reflect appreciation of ticket
-            return multiplier * this.amount.quantity * this.amount.unitPrice;
+            const price = (stockPrices && stockPrices[this.amount.symbol] !== undefined) ? stockPrices[this.amount.symbol] : this.amount.unitPrice;
+            return multiplier * this.amount.quantity * price;
         }
     }
 

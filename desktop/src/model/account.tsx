@@ -32,10 +32,10 @@ export class Account implements AccountOptions {
         return allEntries.filter((entry) => entry.accountId === this.id)
     }
 
-    getValue(allEntries: Entry[], date: Date = new Date()) {
+    getValue(allEntries: Entry[], date: Date = new Date(), stockPrices?: any) {
         const entrySum = allEntries
             .filter((entry) => entry.accountId === this.id)
-            .reduce((total: number, current: Entry) => total + current.getValue(date), 0);
+            .reduce((total: number, current: Entry) => total + current.getValue(date, stockPrices), 0);
         return this.maxValue ? this.maxValue - entrySum : entrySum;
     }
 

@@ -1,3 +1,4 @@
+import { StockAmount } from "../model/entry";
 import { AccountType } from "../model/enums";
 
 export const prettifyEnum = (string: string) => {
@@ -16,6 +17,10 @@ export const getTypeColor = (type: AccountType) => {
         return "#5A8A0B";
     }
 };
+
+export const getStockAmountString = (amount: StockAmount) => {
+    return `${amount.quantity}x${amount.symbol} @ $${amount.unitPrice}`;
+}
 
 export const getAmountString = (amount: number, type: AccountType) => {
     return `

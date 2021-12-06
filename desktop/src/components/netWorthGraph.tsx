@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { Account } from "../model/account"
 import { Entry } from "../model/entry"
 import { Card } from "./base/card"
@@ -12,7 +12,6 @@ type NetWorthGraphProps = {
 const MILLISECONDS_PER_DAY = 60000 * 60 * 24;
 
 export const NetWorthGraph: FunctionComponent<NetWorthGraphProps> = ({ accounts, entries }) => {
-    const [chartData, setChartData] = useState<any[]>([]);
     const graphDuration = MILLISECONDS_PER_DAY * 90;
     const graphInterval = MILLISECONDS_PER_DAY;
 
@@ -28,7 +27,7 @@ export const NetWorthGraph: FunctionComponent<NetWorthGraphProps> = ({ accounts,
             });
             currentDate = new Date(currentDate.valueOf() + graphInterval);
         }
-        setChartData(points);
+        //setChartData(points);
     }, [accounts, entries, graphDuration, graphInterval]);
 
     return (

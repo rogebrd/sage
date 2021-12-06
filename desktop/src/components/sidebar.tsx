@@ -14,14 +14,17 @@ import { Star } from "@material-ui/icons";
 import "../styles/sidebar.scss";
 import { getAmountString, prettifyEnum } from "../util/helpers";
 import { Card } from "./base/card";
+import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 
 interface SidebarProps {
     accounts: Account[],
-    entries: Entry[]
+    entries: Entry[],
+    stockPrices: any,
 }
 
-export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) => {
+export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, stockPrices }) => {
     const [netWorth, setNetWorth] = useState<number>(0);
+    const currentDate = new Date();
 
     const getCategories = (accounts: Account[]) => accounts
         .map((account) => account.category)
@@ -69,7 +72,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                 {account.name}
             </p>
             <p>
-                {getAmountString(account.getValue(entries), account.type)}
+                {getAmountString(account.getValue(entries, currentDate, stockPrices), account.type)}
                 {
                     account.maxValue ? (
                         <span className="subtext">
@@ -92,14 +95,14 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
             return -1;
         }
 
-        return Math.abs(b.getValue(entries)) - Math.abs(a.getValue(entries));
+        return Math.abs(b.getValue(entries, currentDate, stockPrices)) - Math.abs(a.getValue(entries, currentDate, stockPrices));
     }
 
     useEffect(() => {
         setNetWorth(
-            accounts.map((account) => account.getValue(entries)).reduce((total: number, current: number) => total + current, 0)
+            accounts.filter((account) => account.type !== AccountType.POINT).map((account) => account.getValue(entries, currentDate, stockPrices)).reduce((total: number, current: number) => total + current, 0)
         );
-    }, [accounts, entries]);
+    }, [accounts, entries, stockPrices]);
 
     return (
         <div className="sidebar" >
@@ -110,6 +113,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                         Math.round((netWorth - Math.floor(netWorth)) * 100).toLocaleString('en-US')
                     }
                     </h2>
+                    {Object.keys(stockPrices).length === 0 ? (<NetworkCheckIcon />) : null}
                 </span>
             </Card>
             <Card>
@@ -117,7 +121,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                     getCategories(accounts).sort().map((category) => {
                         const categoryValue = accounts
                             .filter((account) => account.category === category)
-                            .map((account) => account.getValue(entries))
+                            .map((account) => account.getValue(entries, currentDate, stockPrices))
                             .reduce((total: number, current: number) => total + current, 0);
                         return (
                             <div key={category} className="sidebar__category">
@@ -162,7 +166,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries }) 
                 [AccountType.CASH, AccountType.INVESTMENT, AccountType.LIABILITY].map((type) => {
                     const typeAccounts = accounts.filter((account) => account.type === type).filter((account) => !account.parentAccountId).sort(sortAccounts);
                     const typeValue = typeAccounts
-                        .map((account) => account.getValue(entries))
+                        .map((account) => account.getValue(entries, currentDate, stockPrices))
                         .reduce((total: number, current: number) => total + current, 0);
                     return (
                         <Card key={type}>
