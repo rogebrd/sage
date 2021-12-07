@@ -7,6 +7,10 @@ CORS(app)
 
 logger = app.logger
 
+@app.route('/')
+def handle_base():
+    return "Welcome to Sage"
+
 @app.route('/api/', methods = ['GET'])
 def handle_home():
     logger.info('Handling Home Request')
@@ -24,4 +28,6 @@ def handle_transaction():
     return "success"
 
 if __name__ == '__main__':
+    app.logger.info("Spinning up main server")
     app.run(debug=True, host='0.0.0.0')
+    #app.run()

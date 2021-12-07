@@ -10,7 +10,5 @@ services:
       ACCOUNT_TABLE_NAME: sage-development-Accounts
       TRANSACTION_TABLE_NAME: sage-development-Transactions
       ENTRY_TABLE_NAME: sage-development-Entries
-      AWS_ACCESS_KEY_ID: null
-      AWS_SECRET_ACCESS_KEY: null
     ports: [ '5000:5000' ]
     volumes: [ './:/app' ]
