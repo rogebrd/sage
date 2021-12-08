@@ -11,7 +11,6 @@ import { Button } from '@material-ui/core';
 import { NetWorthGraph } from '../components/netWorthGraph';
 import { TransactionTable } from '../components/transactionTable';
 import { AddTransactionModal } from '../components/addTransactionModal';
-import { fetchStockPrices } from '../util/stockTracker';
 
 export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -42,7 +41,6 @@ export const HomePage: FunctionComponent = () => {
                     entries.push(entryFromDynamoDB(rawEntry));
                 });
 
-                setStockPrices(fetchStockPrices(entries, stockPrices));
                 setAccounts(accounts);
                 setTransactions(transactions);
                 setEntries(entries);

@@ -71,6 +71,13 @@ body, #root{
       overflow-y: scroll;
       flex-direction: column;
     }
+
+    &__login {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }
 
