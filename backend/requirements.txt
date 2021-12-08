@@ -2,3 +2,4 @@ flask
 flask-cors
 boto3
 python-dotenv
+requests
