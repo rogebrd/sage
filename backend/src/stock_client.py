@@ -6,7 +6,7 @@ import requests
 from token_client import TokenClient
 from util import chunkify
 
-STOCK_TOKEN_KEY = "YahooFinance"
+STOCK_TOKEN_KEY = "YAHOO_FINANCE"
 STOCK_REFRESH_MINIMUM_INTERVAL = 600 # 10 minutes
 
 class StockClient:
