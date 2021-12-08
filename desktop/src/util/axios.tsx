@@ -1,6 +1,14 @@
 import axios from "axios";
 
 export const client = axios.create({
-    baseURL: "https://2yogy92kah.execute-api.us-west-2.amazonaws.com/prod/api",
+    // Docker
+    baseURL: "http://localhost:5000",
     timeout: 10000
 })
+
+export const setAuthHeader = (token: string) => {
+    client.interceptors.request.use((config) => {
+        config.headers.Authorization = `Bearer ${token}`;
+        return config;
+    });
+}

@@ -1,10 +1,21 @@
+import React, { useState } from 'react';
 import './styles/App.scss';
 import './styles/svg.scss';
 import { HomePage } from './pages/home';
+import { LoginPage } from './pages/login';
 
-function App() {
+export const App = () => {
+  const [page, setPage] = useState("LOGIN");
+
   return (
-    <HomePage />
+    <>
+      {
+        (page === "LOGIN") ? (<LoginPage setPage={setPage} />) : null
+      }
+      {
+        (page === "HOME") ? (<HomePage />) : null
+      }
+    </>
   );
 }
 
