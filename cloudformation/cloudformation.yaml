@@ -12,8 +12,8 @@ Resources:
         - AttributeName: 'AccountId'
           AttributeType: 'S'
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
   # Transaction Table
   TransactionTable:
@@ -28,8 +28,8 @@ Resources:
         - AttributeName: 'TransactionId'
           AttributeType: 'S'
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
   # Entry Table
   EntryTable:
@@ -44,286 +44,27 @@ Resources:
         - AttributeName: 'EntryId'
           AttributeType: 'S'
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
-    # Sage Get Lambda Definition
-  SageGetLambda:
-    Type: AWS::Lambda::Function
-    Properties: 
-      Environment:
-        Variables:
-          TRANSACTION_TABLE_NAME: !Ref TransactionTable
-          ACCOUNT_TABLE_NAME: !Ref AccountTable
-          ENTRY_TABLE_NAME: !Ref EntryTable
-      Handler: 'sage.get_home'
-      Code:
-        S3Bucket: sage-codedeployment-bucket
-        S3Key: build/sage.zip
-      Runtime: python3.7
-      Description: Gets the JSON data for the main page
-      Timeout: 30
-      MemorySize: 128
-      Role: !GetAtt
-          - SageLambdaInvocationRole
-          - Arn
-
-  # Sage Create Account Definition
-  SageCreateAccountLambda:
-    Type: AWS::Lambda::Function
-    Properties: 
-      Environment:
-        Variables:
-          ACCOUNT_TABLE_NAME: !Ref AccountTable
-      Handler: 'sage.create_account'
-      Code:
-        S3Bucket: sage-codedeployment-bucket
-        S3Key: build/sage.zip
-      Runtime: python3.7
-      Description: Creates a new account
-      Timeout: 30
-      MemorySize: 128
-      Role: !GetAtt
-          - SageLambdaInvocationRole
-          - Arn
-
-  # Sage Create Transaction Definition
-  SageCreateTransactionLambda:
-    Type: AWS::Lambda::Function
-    Properties: 
-      Environment:
-        Variables:
-          TRANSACTION_TABLE_NAME: !Ref TransactionTable
-          ENTRY_TABLE_NAME: !Ref EntryTable
-      Handler: 'sage.create_transaction'
-      Code:
-        S3Bucket: sage-codedeployment-bucket
-        S3Key: build/sage.zip
-      Runtime: python3.7
-      Description: Creates a new transaction & entries
-      Timeout: 30
-      MemorySize: 128
-      Role: !GetAtt
-          - SageLambdaInvocationRole
-          - Arn
-
-  # IAM permissions for lambda
-  SageLambdaInvocationRole:
-      Type: AWS::IAM::Role
-      Properties:
-        Description: Role for lambda for Sage
-        AssumeRolePolicyDocument:
-          Statement:
-            - Action: ['sts:AssumeRole']
-              Effect: Allow
-              Principal:
-                Service: [lambda.amazonaws.com]
-          Version: '2012-10-17'
-        ManagedPolicyArns:
-          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        Policies:
-            - PolicyDocument:
-                Statement:
-                  Action: '*'
-                  Effect: Allow
-                  Resource: '*'
-                Version: '2012-10-17'
-              PolicyName: SageDynamoDbPolicy
-  
-  # Api Gateway for publishing data
-  ApiGateway:
-    Type: AWS::ApiGateway::RestApi
+  # Token Table
+  TokenTable:
+    Type: AWS::DynamoDB::Table
     Properties:
-      Name: Sage
-      Description: Sage Gateway
-  
-  ApiResource:
-    Type: 'AWS::ApiGateway::Resource'
-    Properties:
-      RestApiId: !Ref ApiGateway
-      ParentId: !GetAtt 
-        - ApiGateway
-        - RootResourceId
-      PathPart: 'api'
-
-  AccountResource:
-    Type: 'AWS::ApiGateway::Resource'
-    Properties:
-      RestApiId: !Ref ApiGateway
-      ParentId: !Ref ApiResource
-      PathPart: 'account'
-
-  TransactionResource:
-    Type: 'AWS::ApiGateway::Resource'
-    Properties:
-      RestApiId: !Ref ApiGateway
-      ParentId: !Ref ApiResource
-      PathPart: 'transaction'
-
-  # Get API for main page
-  SageGetMethod:
-    Type: AWS::ApiGateway::Method
-    Properties: 
-      HttpMethod: GET
-      AuthorizationType: NONE
-      ResourceId: !Ref ApiResource
-      RestApiId: !Ref ApiGateway
-      Integration:
-        IntegrationHttpMethod: POST
-        Type: AWS_PROXY
-        Uri: !Sub
-          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
-          - lambdaArn: !GetAtt
-            - SageGetLambda
-            - Arn
-
-  # Post API for create account
-  SageCreateAccountMethod:
-    Type: AWS::ApiGateway::Method
-    Properties: 
-      HttpMethod: POST
-      AuthorizationType: NONE
-      ResourceId: !Ref AccountResource
-      RestApiId: !Ref ApiGateway
-      Integration:
-        IntegrationHttpMethod: POST
-        Type: AWS_PROXY
-        Uri: !Sub
-          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
-          - lambdaArn: !GetAtt
-            - SageCreateAccountLambda
-            - Arn
-  
-  # Post API for create transaction
-  SageCreateTransactiontMethod:
-    Type: AWS::ApiGateway::Method
-    Properties: 
-      HttpMethod: POST
-      AuthorizationType: NONE
-      ResourceId: !Ref TransactionResource
-      RestApiId: !Ref ApiGateway
-      Integration:
-        IntegrationHttpMethod: POST
-        Type: AWS_PROXY
-        Uri: !Sub
-          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
-          - lambdaArn: !GetAtt
-            - SageCreateTransactionLambda
-            - Arn
-
-  ApiOptionsMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      HttpMethod: OPTIONS
-      AuthorizationType: NONE
-      ResourceId: !Ref ApiResource
-      RestApiId: !Ref ApiGateway
-      Integration:
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            ResponseTemplates:
-              application/json: ''
-        PassthroughBehavior: WHEN_NO_MATCH
-        RequestTemplates:
-          application/json: "{'statusCode': 200}"
-        Type: MOCK
-      MethodResponses:
-        - StatusCode: 200
-          ResponseModels:
-            application/json: 'Empty'
-          ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: false
-              method.response.header.Access-Control-Allow-Methods: false
-              method.response.header.Access-Control-Allow-Origin: false
-  
-  AccountOptionsMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      HttpMethod: OPTIONS
-      AuthorizationType: NONE
-      ResourceId: !Ref AccountResource
-      RestApiId: !Ref ApiGateway
-      Integration:
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            ResponseTemplates:
-              application/json: ''
-        PassthroughBehavior: WHEN_NO_MATCH
-        RequestTemplates:
-          application/json: "{'statusCode': 200}"
-        Type: MOCK
-      MethodResponses:
-        - StatusCode: 200
-          ResponseModels:
-            application/json: 'Empty'
-          ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: false
-              method.response.header.Access-Control-Allow-Methods: false
-              method.response.header.Access-Control-Allow-Origin: false
-
-  TransactionOptionsMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      HttpMethod: OPTIONS
-      AuthorizationType: NONE
-      ResourceId: !Ref TransactionResource
-      RestApiId: !Ref ApiGateway
-      Integration:
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            ResponseTemplates:
-              application/json: ''
-        PassthroughBehavior: WHEN_NO_MATCH
-        RequestTemplates:
-          application/json: "{'statusCode': 200}"
-        Type: MOCK
-      MethodResponses:
-        - StatusCode: 200
-          ResponseModels:
-            application/json: 'Empty'
-          ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: false
-              method.response.header.Access-Control-Allow-Methods: false
-              method.response.header.Access-Control-Allow-Origin: false
-  
-  # Lambda hookup for API Gateway
-  SageGetLambdaApiGatewayInvoke:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt
-        - SageGetLambda
-        - Arn
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/GET/'
-
-  # API Gateway Deployment 
-  # last to avoid no method errors
-  ApiGatewayDeployment:
-    Type: AWS::ApiGateway::Deployment
-    DependsOn:
-      - "ApiOptionsMethod"
-    Properties:
-      RestApiId: !Ref ApiGateway
-      StageName: prod
+      TableName: !Sub '${AWS::StackName}-Tokens'
+      BillingMode: 'PROVISIONED'
+      KeySchema:
+        - KeyType: 'HASH'
+          AttributeName: 'TokenId'
+      AttributeDefinitions:
+        - AttributeName: 'TokenId'
+          AttributeType: 'S'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
 # Stack Outputs
 Outputs:
-  ApiGatewayInvokeURL:
-      Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/'
-      Description: URL to Invoke Api Gateway
   StackArn:
     Value: !Ref AWS::StackId
     Description: Stack Id
