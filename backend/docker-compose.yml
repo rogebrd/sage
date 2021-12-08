@@ -1,14 +1,28 @@
 version: "3"
 services:
-  web:
+  local:
     build: .
     entrypoint: python
-    command: app.py
+    command: src/app.py
     environment:
       FLASK_DEBUG: 1
       FLASK_APP: app.py
       ACCOUNT_TABLE_NAME: sage-development-Accounts
       TRANSACTION_TABLE_NAME: sage-development-Transactions
       ENTRY_TABLE_NAME: sage-development-Entries
+      TOKEN_TABLE_NAME: sage-development-Tokens
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     ports: [ '5000:5000' ]
     volumes: [ './:/app' ]
+  elb-prod:
+    build: .
+    entrypoint: python
+    command: app.py
+    environment:
+      FLASK_APP: app.py
+      ACCOUNT_TABLE_NAME: sage-prod-Accounts
+      TRANSACTION_TABLE_NAME: sage-prod-Transactions
+      ENTRY_TABLE_NAME: sage-prod-Entries
+      TOKEN_TABLE_NAME: sage-prod-Tokens
+    ports: [ '80:5000' ]
