@@ -61,8 +61,8 @@ def handle_sidebar():
     log_request(request)
     login_manager.validate_request_auth(request)
 
-    type_sums = {}
-    category_data = {}
+    category_sums = {}
+    type_data = {}
     net_worth = 0
 
     accounts = account_client.get_all_accounts()
@@ -70,42 +70,46 @@ def handle_sidebar():
         entries = entry_client.get_entries_for_account(account)
         entry_values = [stock_client.get_entry_value(entry) for entry in entries]
         account_sum = functools.reduce(operator.add, entry_values, 0)
-        type_sums[account.type] = type_sums.get(account.type, 0) + account_sum
+
+        if account.max_value is not None and account.max_value != "" and float(account.max_value) != 0:
+            account_sum = float(account.max_value) - account_sum
+
+        category_sums[account.category] = category_sums.get(account.category, 0) + account_sum
         new_account_info = {
             "id": account.id,
             "name": account.name,
             "value": account_sum,
-            "is_points": account.type == "SPECIAL",
+            "is_points": account.type == "POINT",
             "is_remaining": account.max_value is not None and account.max_value != 0,
             "parent_account_id": account.parent_account_id
         }
 
-        parent_category = [parent_account.category for parent_account in accounts if account.parent_account_id == parent_account.id]
-        selected_category = parent_category[0] if len(parent_category) != 0 else account.category
-        category = category_data.get(selected_category, {
+        parent_type = [parent_account.type for parent_account in accounts if account.parent_account_id == parent_account.id]
+        selected_type = parent_type[0] if len(parent_type) != 0 else account.type
+        account_type = type_data.get(selected_type, {
             'sum': 0,
             'accounts': []
         })
-        if account.type != "SPECIAL":
-            category['sum'] = category.get('sum') + account_sum
+        if account.type != "POINT":
+            account_type['sum'] = account_type.get('sum') + account_sum
 
-        new_account_list = category.get('accounts', [])
+        new_account_list = account_type.get('accounts', [])
         if new_account_list is None or len(new_account_list) == 0:
             new_account_list = [new_account_info]
         else:
             new_account_list.append(new_account_info)
-        category['accounts'] = new_account_list
+        account_type['accounts'] = new_account_list
 
-        category_data[selected_category] = category
+        type_data[selected_type] = account_type
 
-        if account.type != "SPECIAL":
+        if account.type != "POINT":
             net_worth += account_sum
 
 
     response_json = {
         "net_worth": net_worth,
-        "type_sums": type_sums,
-        "category_data": category_data
+        "category_sums": category_sums,
+        "type_data": type_data
     }
 
     return response_json
