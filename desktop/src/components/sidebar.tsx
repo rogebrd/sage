@@ -15,6 +15,7 @@ import "../styles/sidebar.scss";
 import { getAmountString, prettifyEnum } from "../util/helpers";
 import { Card } from "./base/card";
 import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
+import { client } from "../util/axios";
 
 interface SidebarProps {
     accounts: Account[],
@@ -24,11 +25,21 @@ interface SidebarProps {
 
 export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, stockPrices }) => {
     const [netWorth, setNetWorth] = useState<number>(0);
+    const [categoryValues, setCategoryValues] = useState({});
+    const [typeValues, setTypeValues] = useState({});
     const currentDate = new Date();
 
-    const getCategories = (accounts: Account[]) => accounts
-        .map((account) => account.category)
-        .filter((item, i, ar) => ar.indexOf(item) === i);
+    useEffect(() => {
+        client.get('/sidebar')
+            .then((response) => {
+                setNetWorth(response.data.net_worth);
+                setCategoryValues(response.data.category_sums)
+                setTypeValues(response.data.type_data)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }, []);
 
     const getIconForCategory = (category: AccountCategory) => {
         if (category === AccountCategory.DAILY) {
@@ -63,46 +74,46 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
         }
     }
 
-    const renderAccount = (account: Account, isChildAccount: boolean = false) => (
-        <div key={account.id} className="sidebar__accounts--account">
+    const renderAccount = (accountId: number, accountName: string, accountValue: number, isPoint: boolean, isRemaining: boolean, isChildAccount: boolean = false) => (
+        <div key={accountId} className="sidebar__accounts--account">
             <p>
                 {
                     isChildAccount ? childAccountIcon : null
                 }
-                {account.name}
+                {accountName}
             </p>
             <p>
-                {getAmountString(account.getValue(entries, currentDate, stockPrices), account.type)}
+                {getAmountString(accountValue, isPoint)}
                 {
-                    account.maxValue ? (
+                    isRemaining ? (
                         <span className="subtext">
                             rem.
                         </span>
                     ) : null
                 }
                 {
-                    account.type === AccountType.POINT ? pointIcon : null
+                    isPoint ? pointIcon : null
                 }
             </p>
         </div>
     );
 
-    const sortAccounts = (a: Account, b: Account) => {
-        if (a.maxValue && !b.maxValue) {
+    const getChildAccounts = (accountId: string, accounts: any[]) => {
+        return accounts.filter((account) => {
+            return account.parent_account_id == accountId
+        })
+    }
+
+    const sortAccounts = (a: any, b: any) => {
+        if (a.is_remaining && !b.is_remaining) {
             return 1;
         }
-        if (!a.maxValue && b.maxValue) {
+        if (!a.is_remaining && b.is_remaining) {
             return -1;
         }
 
-        return Math.abs(b.getValue(entries, currentDate, stockPrices)) - Math.abs(a.getValue(entries, currentDate, stockPrices));
+        return Math.abs(b.value) - Math.abs(a.value);
     }
-
-    useEffect(() => {
-        setNetWorth(
-            accounts.filter((account) => account.type !== AccountType.POINT).map((account) => account.getValue(entries, currentDate, stockPrices)).reduce((total: number, current: number) => total + current, 0)
-        );
-    }, [accounts, entries, stockPrices]);
 
     return (
         <div className="sidebar" >
@@ -118,11 +129,9 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
             </Card>
             <Card>
                 {
-                    getCategories(accounts).sort().map((category) => {
-                        const categoryValue = accounts
-                            .filter((account) => account.category === category)
-                            .map((account) => account.getValue(entries, currentDate, stockPrices))
-                            .reduce((total: number, current: number) => total + current, 0);
+                    Object.entries(categoryValues).map((categoryEntry) => {
+                        const categoryValue = Number.parseFloat(categoryEntry[1] as string);
+                        const category = AccountCategory[categoryEntry[0] as keyof typeof AccountCategory];
                         return (
                             <div key={category} className="sidebar__category">
                                 <h2>
@@ -135,7 +144,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
                                             {
                                                 getAmountString(
                                                     categoryValue,
-                                                    (category === AccountCategory.SPECIAL) ? AccountType.POINT : AccountType.CASH
+                                                    (category === AccountCategory.SPECIAL)
                                                 )
                                             }
                                             {
@@ -148,7 +157,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
                                                 {
                                                     getAmountString(
                                                         categoryValue,
-                                                        (category === AccountCategory.SPECIAL) ? AccountType.POINT : AccountType.CASH
+                                                        (category === AccountCategory.SPECIAL)
                                                     )
                                                 }
                                                 {
@@ -163,11 +172,11 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
                 }
             </Card>
             {
-                [AccountType.CASH, AccountType.INVESTMENT, AccountType.LIABILITY].map((type) => {
-                    const typeAccounts = accounts.filter((account) => account.type === type).filter((account) => !account.parentAccountId).sort(sortAccounts);
-                    const typeValue = typeAccounts
-                        .map((account) => account.getValue(entries, currentDate, stockPrices))
-                        .reduce((total: number, current: number) => total + current, 0);
+                Object.entries(typeValues).map((typeEntry) => {
+                    const typeBlob = typeEntry[1] as any;
+                    const typeAccounts: any[] = typeBlob.accounts;
+                    const type = AccountType[typeEntry[0] as keyof typeof AccountType]
+                    const typeValue = typeBlob.sum;
                     return (
                         <Card key={type}>
                             <div className="sidebar__type">
@@ -179,29 +188,35 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
                                     {
                                         typeValue < 0 ? (
                                             <span className="negative">
-                                                {getAmountString(typeValue, AccountType.CASH)}
+                                                {getAmountString(typeValue, false)}
                                             </span>
                                         ) :
-                                            getAmountString(typeValue, AccountType.CASH)
+                                            getAmountString(typeValue, false)
                                     }
                                 </h2>
                             </div>
                             <div className="sidebar__accounts">
                                 {
-                                    typeAccounts.map((account) => (
-                                        <>
-                                            {
-                                                renderAccount(account)
-                                            }
-                                            {
-                                                account.getChildAccounts(accounts).length > 0 ? account.getChildAccounts(accounts)
-                                                    .sort(sortAccounts)
-                                                    .map((childAccount) => {
-                                                        return renderAccount(childAccount, true);
-                                                    }) : null
-                                            }
-                                        </>
-                                    ))
+                                    typeAccounts.filter((account) => (account.parent_account_id === null || account.parent_account_id === '')).sort(sortAccounts).map((account) => {
+                                        return (
+                                            <>
+                                                {
+                                                    renderAccount(account.id, account.name, account.value, account.is_points, account.is_remaining, false)
+                                                }
+                                                {
+                                                    getChildAccounts(account.id, typeAccounts)
+                                                        .sort(sortAccounts)
+                                                        .map((childAccount) => {
+                                                            return renderAccount(childAccount.id, childAccount.name, childAccount.value, childAccount.is_points, childAccount.is_remaining, true);
+                                                        })
+                                                }
+                                            </>
+                                        )
+                                        // } else {
+                                        //     return null;
+                                        // }
+                                    })
+
                                 }
                             </div>
                         </Card>

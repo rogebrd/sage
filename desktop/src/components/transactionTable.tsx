@@ -1,7 +1,7 @@
 import React, { useState, FunctionComponent } from "react";
 import { Account } from "../model/account";
 import { Entry, StockAmount } from "../model/entry";
-import { EntryStyle } from "../model/enums";
+import { AccountType, EntryStyle } from "../model/enums";
 import { Transaction } from "../model/transaction";
 import { formatDate, getAmountString, getStockAmountString } from "../util/helpers";
 import { Card } from "./base/card";
@@ -23,7 +23,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
 
     const renderAmount = (entry: Entry) => {
         if (typeof entry.amount === 'number') {
-            return getAmountString(entry.getValue(new Date(entry.date)), entry.getAccount(accounts)?.type);
+            return getAmountString(entry.getValue(new Date(entry.date)), entry.getAccount(accounts)?.type === AccountType.POINT);
         } else {
             return getStockAmountString(entry.amount);
         }
