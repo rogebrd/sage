@@ -80,7 +80,7 @@ def handle_sidebar():
             "name": account.name,
             "value": account_sum,
             "is_points": account.type == "POINT",
-            "is_remaining": account.max_value is not None and account.max_value != 0,
+            "is_remaining": account.max_value is not None and account.max_value != '',
             "parent_account_id": account.parent_account_id
         }
 

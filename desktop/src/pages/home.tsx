@@ -22,7 +22,7 @@ export const HomePage: FunctionComponent = () => {
     const [addTransactionModalVisibility, setAddTransactionModalVisibility] = useState<boolean>(false);
 
     useEffect(() => {
-        client.get('/')
+        client.get('/api/')
             .then((response) => {
                 let accounts: Account[] = [];
                 let transactions: Transaction[] = [];
@@ -37,7 +37,6 @@ export const HomePage: FunctionComponent = () => {
                 });
 
                 response.data.entries.forEach((rawEntry: string) => {
-                    console.log(rawEntry);
                     entries.push(entryFromDynamoDB(rawEntry));
                 });
 

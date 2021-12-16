@@ -36,7 +36,6 @@ export const transactionFromDynamoDB = (transactionRaw: any): Transaction => {
 
 const parseAmount = (amountString: string): number | StockAmount => {
     const asFloat = Number.parseFloat(amountString);
-    console.log(asFloat);
     if (!isNaN(asFloat)) {
         return asFloat;
     } else {

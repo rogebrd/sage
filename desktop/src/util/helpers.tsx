@@ -22,9 +22,9 @@ export const getStockAmountString = (amount: StockAmount) => {
     return `${amount.quantity}x${amount.symbol} @ $${amount.unitPrice}`;
 }
 
-export const getAmountString = (amount: number, type: AccountType) => {
+export const getAmountString = (amount: number, isPoint: boolean) => {
     return `
-    ${amount < 0 ? '-' : ''}${type !== AccountType.POINT ? '$' : ''}${type !== AccountType.POINT ?
+    ${amount < 0 ? '-' : ''}${!isPoint ? '$' : ''}${!isPoint ?
             Math.abs(amount).toLocaleString('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 2 }) :
             amount.toLocaleString('en-US', { maximumFractionDigits: 0 })
         }
