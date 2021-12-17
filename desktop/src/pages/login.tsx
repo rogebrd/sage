@@ -20,6 +20,7 @@ export const LoginPage: FunctionComponent<LoginPageProps> = ({ setPage }) => {
                 }).then((response) => {
                     setAuthHeader(response.data.access_token);
                     setPage("HOME");
+                    setPassword('');
                 });
             })
     }

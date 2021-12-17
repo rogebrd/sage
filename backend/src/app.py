@@ -128,7 +128,7 @@ def handle_account():
     create_account(request.get_data(), logger)
     return "success"
 
-@app.route('/api/transaction', methods = ['POST'])
+@app.route('/transaction', methods = ['POST'])
 def handle_transaction():
     log_request(request)
     

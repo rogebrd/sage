@@ -17,17 +17,10 @@ import { Card } from "./base/card";
 import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 import { client } from "../util/axios";
 
-interface SidebarProps {
-    accounts: Account[],
-    entries: Entry[],
-    stockPrices: any,
-}
-
-export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, stockPrices }) => {
+export const Sidebar: FunctionComponent = () => {
     const [netWorth, setNetWorth] = useState<number>(0);
     const [categoryValues, setCategoryValues] = useState({});
     const [typeValues, setTypeValues] = useState({});
-    const currentDate = new Date();
 
     useEffect(() => {
         client.get('/sidebar')
@@ -124,7 +117,6 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
                         Math.round((netWorth - Math.floor(netWorth)) * 100).toLocaleString('en-US')
                     }
                     </h2>
-                    {Object.keys(stockPrices).length === 0 ? (<NetworkCheckIcon />) : null}
                 </span>
             </Card>
             <Card>
@@ -212,9 +204,6 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ accounts, entries, st
                                                 }
                                             </>
                                         )
-                                        // } else {
-                                        //     return null;
-                                        // }
                                     })
 
                                 }

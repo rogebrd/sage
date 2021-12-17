@@ -8,7 +8,6 @@ import { Entry } from '../model/entry';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import { AddAccountModal } from '../components/addAccountModal';
 import { Button } from '@material-ui/core';
-import { NetWorthGraph } from '../components/netWorthGraph';
 import { TransactionTable } from '../components/transactionTable';
 import { AddTransactionModal } from '../components/addTransactionModal';
 
@@ -59,13 +58,8 @@ export const HomePage: FunctionComponent = () => {
                 <Button onClick={() => setAddTransactionModalVisibility(true)}>T<SettingsOutlinedIcon /></Button>
             </div>
             <div className="app__content">
-                <Sidebar
-                    accounts={accounts}
-                    entries={entries}
-                    stockPrices={stockPrices}
-                />
+                <Sidebar />
                 <div className="app__content__main">
-                    <NetWorthGraph accounts={accounts} entries={entries} />
                     <TransactionTable
                         accounts={accounts}
                         entries={entries}
