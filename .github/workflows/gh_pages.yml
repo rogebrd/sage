@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v2.1.5
         with:
           registry-url: https://npm.pkg.github.com/
-          node-version: 17
+          node-version: 16
       - name: Build Desktop
         run: |
           cd desktop/
