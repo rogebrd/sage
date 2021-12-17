@@ -1,6 +1,6 @@
-import React, { useState, FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import { Account } from "../model/account";
-import { Entry, StockAmount } from "../model/entry";
+import { Entry } from "../model/entry";
 import { AccountType, EntryStyle } from "../model/enums";
 import { Transaction } from "../model/transaction";
 import { formatDate, getAmountString, getStockAmountString } from "../util/helpers";

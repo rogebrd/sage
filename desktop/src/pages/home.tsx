@@ -15,7 +15,6 @@ export const HomePage: FunctionComponent = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [entries, setEntries] = useState<Entry[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [stockPrices, setStockPrices] = useState<{}>({});
 
     const [addAccountModalVisibility, setAddAccountModalVisibilty] = useState<boolean>(false);
     const [addTransactionModalVisibility, setAddTransactionModalVisibility] = useState<boolean>(false);

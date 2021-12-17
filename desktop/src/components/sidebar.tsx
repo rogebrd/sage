@@ -1,6 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from "react"
-import { Account } from "../model/account";
-import { Entry } from "../model/entry";
 import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 import LoyaltyOutlinedIcon from '@material-ui/icons/LoyaltyOutlined';
 import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutlined'
@@ -14,7 +12,6 @@ import { Star } from "@material-ui/icons";
 import "../styles/sidebar.scss";
 import { getAmountString, prettifyEnum } from "../util/helpers";
 import { Card } from "./base/card";
-import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 import { client } from "../util/axios";
 
 export const Sidebar: FunctionComponent = () => {
@@ -93,7 +90,7 @@ export const Sidebar: FunctionComponent = () => {
 
     const getChildAccounts = (accountId: string, accounts: any[]) => {
         return accounts.filter((account) => {
-            return account.parent_account_id == accountId
+            return account.parent_account_id === accountId
         })
     }
 

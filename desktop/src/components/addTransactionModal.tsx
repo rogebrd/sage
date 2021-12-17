@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { Account } from "../model/account";
 import { Button, Modal } from "@material-ui/core";
 import { allEntryStyles, EntryStyle } from "../model/enums";
@@ -25,7 +25,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
     const [transactionId, setTransactionId] = useState<string>("");
     const [newEntries, setNewEntries] = useState<Partial<Entry>[]>([]);
 
-    const getNextTransactionId = (): string => {
+    const getNextTransactionId = useCallback((): string => {
         const maxId = transactions
             .map((account) => Number.parseInt(account.id))
             .reduce((total, current) => {
@@ -36,7 +36,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
                 }
             }, 0)
         return (maxId + 1).toString()
-    }
+    }, [transactions]);
 
     useEffect(() => {
         if (existingTransaction) {
@@ -45,7 +45,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
         } else {
             setTransactionId(getNextTransactionId());
         }
-    }, [entries, existingTransaction]);
+    }, [existingTransaction, entries, getNextTransactionId]);
 
     const defaultEntryValues: Partial<Entry> = {
         accountId: accounts[0]?.id,
