@@ -27,7 +27,7 @@ class EntryClient:
                 )
                 data.extend(response['Items'])
 
-            return data
+            return [Entry.from_dynamodb(entry) for entry in data]
         except Exception as e:
             self.logger.error(e)
             return []

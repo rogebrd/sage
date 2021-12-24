@@ -85,6 +85,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
         const newTransactionJson = {
             transaction: {
                 id: transaction.id,
+                date: fullEntries.map((entry) => entry.date).reduce((earliestDate, currentDate) => earliestDate > currentDate ? currentDate : earliestDate).toString(),
                 entryIds: transaction.entryIds
             },
             entries: fullEntries
@@ -98,6 +99,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
                     return {
                         id: entry.id,
                         accountId: entry.accountId,
+                        transactionId: transaction.id,
                         style: EntryStyle[entry.style],
                         amount: formattedAmount,
                         date: entry.date.toString(),

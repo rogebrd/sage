@@ -1,8 +1,9 @@
 class Entry:
 
-    def __init__(self, id, account_id, style, amount, date, category, tags, description):
+    def __init__(self, id, account_id, transaction_id, style, amount, date, category, tags, description):
         self.id = id
         self.account_id = account_id
+        self.transaction_id = transaction_id
         self.style = style
         self.amount = amount
         self.date = date
@@ -14,6 +15,7 @@ class Entry:
         return Entry(
             id=dynamo_entry['EntryId']['S'],
             account_id=dynamo_entry['AccountId']['S'],
+            transaction_id=dynamo_entry['TransactionId']['S'],
             style=dynamo_entry['Style']['S'],
             amount=dynamo_entry['Amount']['S'],
             date=dynamo_entry['Date']['N'],

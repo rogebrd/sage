@@ -69,6 +69,7 @@ def create_transaction(transaction, logger):
             TableName=transaction_table_name,
             Item={
                 'TransactionId': {'S': transaction.get('id')},
+                'Date': {'N': transaction.get('date')},
                 'EntryIds': {'SS': transaction.get('entryIds')},
             }
         )
@@ -79,6 +80,7 @@ def create_transaction(transaction, logger):
             item = {
                     'EntryId': {'S': entry.get('id')},
                     'AccountId': {'S': entry.get('accountId')},
+                    'TransactionId': {'S': entry.get('transactionId')},
                     'Style': {'S': entry.get('style')},
                     'Amount': {'S': str(entry.get('amount'))},
                     'Date': {'N': entry.get('date')},
