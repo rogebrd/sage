@@ -54,6 +54,28 @@ class EntryClient:
         except Exception as e:
             self.logger.error(e)
             return []
-        return None
+    
+    def get_entries(self, entry_ids: List[str]):
+        self.logger.info("Attempting to fetch entries - {}".format(entry_ids))
+        if len(entry_ids) > 100:
+            self.logger.error("Batch Get can support a maximum of 100 items")
+
+        try:
+            response = self.dynamodb.batch_get_item(
+                    RequestItems={
+                        self.entry_table_name: {
+                            'Keys': [{'EntryId': entry_id} for entry_id in entry_ids],
+                            'ConsistentRead': True
+                        }
+                    },
+                    ReturnConsumedCapacity='TOTAL'
+                )
+            data = response['Items']
+
+            return [Entry.from_dynamodb(entry) for entry in data]
+        except Exception as e:
+            self.logger.error(e)
+            return []
+
     
     

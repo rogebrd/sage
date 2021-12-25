@@ -1,3 +1,5 @@
+from model.transaction import Transaction
+from transaction_client import TransactionClient
 from flask import Flask, request
 from account_client import AccountClient
 from entry_client import EntryClient
@@ -37,6 +39,7 @@ CORS(app)
 token_client = TokenClient()
 account_client = AccountClient()
 entry_client = EntryClient()
+transaction_client = TransactionClient()
 stock_client = StockClient(token_client)
 login_manager = LoginManager(token_client)
 
@@ -113,13 +116,20 @@ def handle_sidebar():
     }
 
     return response_json
-    
 
-@app.route('/api/', methods = ['GET'])
-def handle_home():
+@app.route('/transaction/table', methods = ['GET'])
+def handle_table():
     log_request(request)
+    login_manager.validate_request_auth(request)
 
-    return get_home(logger)
+    transactions = transaction_client.get_recent_transactions()
+    entry_ids = [entry for entry in (transaction.entries for transaction in transactions)]
+    entries = entry_client.get_entries(entry_ids)
+    # format json
+    response_json = [{}]
+
+    return response_json
+
 
 @app.route('/api/account', methods = ['POST'])
 def handle_account():
