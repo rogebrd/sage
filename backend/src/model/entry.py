@@ -11,6 +11,18 @@ class Entry:
         self.tags = tags
         self.description = description
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "account_id": self.account_id,
+            "style": self.style,
+            "amount": self.amount,
+            "date": self.date,
+            "category": self.category,
+            "tags": self.tags,
+            "description": self.description
+        }
+
     def from_dynamodb(dynamo_entry):
         return Entry(
             id=dynamo_entry['EntryId']['S'],

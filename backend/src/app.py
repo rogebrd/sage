@@ -1,20 +1,21 @@
-from model.transaction import Transaction
-from transaction_client import TransactionClient
+from logging import Logger
+from clients.transaction_client import TransactionClient
 from flask import Flask, request
-from account_client import AccountClient
-from entry_client import EntryClient
-from login_manager import LoginManager
-from stock_client import StockClient
-from token_client import TokenClient
+from clients.account_client import AccountClient
+from clients.entry_client import EntryClient
+from clients.login_client import LoginClient
+from clients.stock_client import StockClient
+from clients.token_client import TokenClient
 from flask_cors import CORS
 import functools
 import operator
 
-from sage import create_account, create_transaction, get_home
+from sage import create_account, create_transaction
 
 from logging.config import dictConfig
 
 
+# Setup Logging Config
 dictConfig({
     'version': 1,
     'formatters': {'default': {
@@ -32,8 +33,10 @@ dictConfig({
 })
 
 
-app = Flask(__name__)
-CORS(app)
+# Create Main App
+flask_app: Flask = Flask(__name__)
+CORS(flask_app)
+logger: Logger = flask_app.logger
 
 # Create Clients
 token_client = TokenClient()
@@ -41,28 +44,19 @@ account_client = AccountClient()
 entry_client = EntryClient()
 transaction_client = TransactionClient()
 stock_client = StockClient(token_client)
-login_manager = LoginManager(token_client)
+login_client = LoginClient(token_client)
 
-
-logger = app.logger
-
-@app.route('/')
+@flask_app.route('/')
 def handle_base():
     log_request(request)
-    login_manager.validate_request_auth(request)
+    login_client.validate_request_auth(request)
 
     return "Welcome to Sage"
 
-@app.route('/login', methods = ['POST'])
-def handle_login():
-    log_request(request)
-
-    return login_manager.login(request)
-
-@app.route('/sidebar', methods = ['GET'])
+@flask_app.route('/sidebar', methods = ['GET'])
 def handle_sidebar():
     log_request(request)
-    login_manager.validate_request_auth(request)
+    login_client.validate_request_auth(request)
 
     category_sums = {}
     type_data = {}
@@ -117,28 +111,36 @@ def handle_sidebar():
 
     return response_json
 
-@app.route('/transaction/table', methods = ['GET'])
+@flask_app.route('/login', methods = ['POST'])
+def handle_login():
+    log_request(request)
+
+    return login_client.login(request)
+
+@flask_app.route('/transaction/table', methods = ['GET'])
 def handle_table():
     log_request(request)
-    login_manager.validate_request_auth(request)
+    login_client.validate_request_auth(request)
 
     transactions = transaction_client.get_recent_transactions()
-    entry_ids = [entry for entry in (transaction.entries for transaction in transactions)]
+    entry_ids = [entry for entry in (transaction.entry_ids for transaction in transactions)]
     entries = entry_client.get_entries(entry_ids)
     # format json
-    response_json = [{}]
+    response_json = {
+        "transactions": [transaction.to_json(entries) for transaction in transactions]
+    }
 
     return response_json
 
 
-@app.route('/api/account', methods = ['POST'])
+@flask_app.route('/api/account', methods = ['POST'])
 def handle_account():
     log_request(request)
 
     create_account(request.get_data(), logger)
     return "success"
 
-@app.route('/transaction', methods = ['POST'])
+@flask_app.route('/transaction', methods = ['POST'])
 def handle_transaction():
     log_request(request)
     
@@ -150,6 +152,6 @@ def log_request(request):
 
 
 if __name__ == '__main__':
-    app.logger.info("Spinning up main server")
-    app.run(debug=True, host='0.0.0.0')
+    flask_app.logger.info("Spinning up main server")
+    flask_app.run(debug=True, host='0.0.0.0')
     

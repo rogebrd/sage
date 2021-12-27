@@ -2,7 +2,6 @@ from typing import List, Optional
 from model.entry import Entry
 from model.account import Account
 import boto3
-from boto3.dynamodb.conditions import Attr
 import os
 import logging
 

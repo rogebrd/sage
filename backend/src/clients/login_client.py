@@ -3,15 +3,15 @@ import logging
 from typing import Optional
 
 from flask import request
-from token_client import TokenClient
+from clients.token_client import TokenClient
 
 LOGIN_TOKEN_KEY = "LOGIN_SHA"
 ACCESS_TOKEN_KEY = "ACCESS_TOKEN"
 
-class LoginManager:
+class LoginClient:
 
     def __init__(self, token_client: TokenClient):
-        self.logger = logging.getLogger("LoginManager")
+        self.logger = logging.getLogger("LoginClient")
         self.token_client = token_client
         self.access_token = self.token_client.get_token(ACCESS_TOKEN_KEY)
 

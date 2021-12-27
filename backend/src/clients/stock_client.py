@@ -5,7 +5,7 @@ from typing import List
 import requests
 from model.entry import Entry
 
-from token_client import TokenClient
+from clients.token_client import TokenClient
 from util import chunkify
 
 STOCK_TOKEN_KEY = "YAHOO_FINANCE"
