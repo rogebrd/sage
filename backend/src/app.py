@@ -1,4 +1,4 @@
-from logging import Logger
+from logging import Logger, log
 from clients.transaction_client import TransactionClient
 from flask import Flask, request
 from clients.account_client import AccountClient
@@ -128,6 +128,24 @@ def handle_table():
     # format json
     response_json = {
         "transactions": [transaction.to_json(entries) for transaction in transactions]
+    }
+
+    return response_json
+
+@flask_app.route('/modal/options', methods = ['GET'])
+def handle_modal_options():
+    log_request(request)
+    login_client.validate_request_auth(request)
+
+    accounts = account_client.get_all_accounts()
+    account_json = [{
+        "id": account.id,
+        "parent_account_id": account.parent_account_id,
+        "name": account.name
+        } for account in accounts]
+
+    response_json = {
+        "accounts": account_json
     }
 
     return response_json
