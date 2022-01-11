@@ -12,11 +12,9 @@ jobs:
         with:
           registry-url: https://npm.pkg.github.com/
           node-version: 16
-      - name: Navigate
-        run: |
-          cd desktop/
       - name: Build Desktop
         run: |
+          cd desktop/
           npm install
           npm run build
       - name: Lint
@@ -29,10 +27,8 @@ jobs:
       - uses: actions/setup-python@v2.2.2
         with:
           python-version: 3.7
-      - name: Navigate
-        run: |
-          cd backend/
       - name: Lint
         run: |
+          cd backend/
           pip install black
           black src --check
