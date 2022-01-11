@@ -1,0 +1,38 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+
+jobs:
+  desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/setup-node@v2.1.5
+        with:
+          registry-url: https://npm.pkg.github.com/
+          node-version: 16
+      - name: Navigate
+        run: |
+          cd desktop/
+      - name: Build Desktop
+        run: |
+          npm install
+          npm run build
+      - name: Lint
+        run: |
+          npm run lint
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.7
+      - name: Navigate
+        run: |
+          cd backend/
+      - name: Lint
+        run: |
+          pip install black
+          black src --check
