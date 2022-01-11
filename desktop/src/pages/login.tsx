@@ -1,29 +1,23 @@
 import { Button } from '@material-ui/core';
-import React, { FunctionComponent, useState } from 'react';
-import { client, setAuthHeader } from '../util/axios';
+import { FunctionComponent, useEffect, useState } from 'react';
+import { navigate } from '../data/actionCreators';
+import { useSageContext } from '../data/provider';
+import { NavigationState } from '../data/state';
 
-type LoginPageProps = {
-    setPage: Function
-}
-
-export const LoginPage: FunctionComponent<LoginPageProps> = ({ setPage }) => {
+export const LoginPage: FunctionComponent = () => {
+    const { resourceManager, dispatch } = useSageContext();
     const [password, setPassword] = useState('');
 
     const login = () => {
-        window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(password))
-            .then((digestedHash) => {
-                const hashArray = Array.from(new Uint8Array(digestedHash));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                console.log(hashHex);
-                client.post("/login", {
-                    "login_sha": hashHex
-                }).then((response) => {
-                    setAuthHeader(response.data.access_token);
-                    setPage("HOME");
-                    setPassword('');
-                });
-            })
-    }
+        resourceManager.login(password);
+        setPassword('');
+    };
+
+    useEffect(() => {
+        if (resourceManager.authenticated) {
+            dispatch(navigate(NavigationState.HOME));
+        }
+    }, []);
 
     return (
         <div className="app">

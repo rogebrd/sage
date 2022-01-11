@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Account } from "../model/account";
 import { Button, Modal } from "@material-ui/core";
 import { AccountCategory, AccountType, allAccountCategories, allAccountTypes } from "../model/enums";
@@ -6,15 +6,15 @@ import { client } from "../util/axios";
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import { prettifyEnum } from "../util/helpers";
 import { Card } from "./base/card";
+import { useSageContext } from "../data/provider";
 
 type AddAccountModalProps = {
     visible: boolean,
     setVisible: Function,
-    accounts: Account[],
-    newAccountCallback: Function
 }
 
-export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({ visible, setVisible, accounts, newAccountCallback }) => {
+export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({ visible, setVisible }) => {
+    const { resourceManager, state } = useSageContext();
     const [newAccountName, setNewAccountName] = useState('');
     const [newAccountType, setNewAccountType] = useState<AccountType>(AccountType.CASH);
     const [newAccountCategory, setNewAccountCategory] = useState<AccountCategory>(AccountCategory.DAILY);
@@ -22,7 +22,7 @@ export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({ visib
     const [newAccountParentAccountId, setNewAccountParentAccountId] = useState<string | undefined>(undefined);
 
     const getNextId = (): string => {
-        const maxId = accounts
+        const maxId = state.accounts
             .map((account) => Number.parseInt(account.id))
             .reduce((total, current) => {
                 if (current > total) {
@@ -55,10 +55,9 @@ export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({ visib
                 parentAccountId: newAccountParentAccountId
             }
         };
-        client.post("/account", newAccountJson).then((response) => {
+        client.post("api/account", newAccountJson).then((response) => {
             clearState();
             setVisible(false);
-            newAccountCallback(newAccount);
         }).catch((exception) => {
             console.error(exception);
         });
@@ -125,7 +124,7 @@ export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({ visib
                         <select value={newAccountParentAccountId} onChange={(event) => setNewAccountParentAccountId(event.target.value)}>
                             <option value="">None</option>
                             {
-                                accounts
+                                state.accounts
                                     .filter((account) => !account.parentAccountId)
                                     .map((account) => (
                                         <option key={account.id} value={account.id}>{account.name}</option>

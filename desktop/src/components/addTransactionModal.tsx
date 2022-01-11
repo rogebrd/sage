@@ -9,66 +9,48 @@ import { Card } from "./base/card";
 import { Entry, StockAmount } from "../model/entry";
 import { Transaction } from "../model/transaction";
 import { StockAmountModal } from "./stockAmountModal";
+import { useSageContext } from "../data/provider";
 
 type AddTransactionModalProps = {
     visible: boolean,
     setVisible: Function,
-    accounts: Account[],
-    entries: Entry[],
-    transactions: Transaction[],
-    newTransactionCallback: Function,
-    newEntryCallback: Function,
     existingTransaction?: Transaction
 }
 
-export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = ({ visible, setVisible, accounts, entries, transactions, newTransactionCallback, newEntryCallback, existingTransaction }) => {
+export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = ({ visible, setVisible, existingTransaction }) => {
+    const { resourceManager, state } = useSageContext();
     const [transactionId, setTransactionId] = useState<string>("");
     const [newEntries, setNewEntries] = useState<Partial<Entry>[]>([]);
 
-    const getNextTransactionId = useCallback((): string => {
-        const maxId = transactions
-            .map((account) => Number.parseInt(account.id))
-            .reduce((total, current) => {
-                if (current > total) {
-                    return current;
-                } else {
-                    return total;
-                }
-            }, 0)
-        return (maxId + 1).toString()
-    }, [transactions]);
+    const [newEntryId, setNewEntryId] = useState<number>(0);
+
+    const getNextEntryId = () => {
+        const newId = newEntryId + 1;
+        setNewEntryId(newId);
+        return newId;
+    }
+
+    useEffect(() => {
+        resourceManager.accounts();
+    }, []);
 
     useEffect(() => {
         if (existingTransaction) {
             setTransactionId(existingTransaction.id);
-            setNewEntries(existingTransaction.getEntries(entries));
+            //setNewEntries(existingTransaction.getEntries(entries));
         } else {
-            setTransactionId(getNextTransactionId());
+            setTransactionId('creation');
         }
-    }, [existingTransaction, entries, getNextTransactionId]);
+    }, [existingTransaction]);
 
     const defaultEntryValues: Partial<Entry> = {
-        accountId: accounts[0]?.id,
+        accountId: state.accounts[0]?.id,
         style: EntryStyle.DEBIT,
         amount: 0,
         date: new Date().valueOf(),
         category: '',
         tags: [],
         description: ''
-    }
-
-    const getNextEntryId = (): string => {
-        const maxId = entries
-            .map((entry) => Number.parseInt(entry.id))
-            .concat(newEntries.map((newEntry) => Number.parseInt(newEntry?.id ? newEntry.id : "-1")))
-            .reduce((total, current) => {
-                if (current > total) {
-                    return current;
-                } else {
-                    return total;
-                }
-            }, 0)
-        return (maxId + 1).toString()
     }
 
     const addTransaction = (event: any) => {
@@ -85,8 +67,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
         const newTransactionJson = {
             transaction: {
                 id: transaction.id,
-                date: fullEntries.map((entry) => entry.date).reduce((earliestDate, currentDate) => earliestDate > currentDate ? currentDate : earliestDate).toString(),
-                entryIds: transaction.entryIds
+                date: fullEntries.map((entry) => entry.date).reduce((earliestDate, currentDate) => earliestDate > currentDate ? currentDate : earliestDate).toString()
             },
             entries: fullEntries
                 .map((entry) => {
@@ -97,9 +78,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
                         formattedAmount = entry.amount;
                     }
                     return {
-                        id: entry.id,
                         accountId: entry.accountId,
-                        transactionId: transaction.id,
                         style: EntryStyle[entry.style],
                         amount: formattedAmount,
                         date: entry.date.toString(),
@@ -113,8 +92,6 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
         client.post("/transaction", newTransactionJson).then((response) => {
             clearState();
             setVisible(false);
-            newEntryCallback(fullEntries);
-            newTransactionCallback(transaction);
         }).catch((exception) => {
             console.error(exception);
         });
@@ -175,7 +152,7 @@ export const AddTransactionModal: FunctionComponent<AddTransactionModalProps> = 
                                             key={index}
                                             entry={entry}
                                             updateEntryCallback={updateEntry}
-                                            accounts={accounts}
+                                            accounts={state.accounts}
                                             removeEntry={removeEntry}
                                         />
                                     ))
@@ -233,7 +210,7 @@ const AddEntryRow: FunctionComponent<AddEntryRowProps> = ({ entry, updateEntryCa
                     {
                         accounts
                             .map((account) => (
-                                <option key={account.id} value={account.id}>{account.parentAccountId}-{account.name}</option>
+                                <option key={account.id} value={account.id}>{(account as any).parent_account_id}-{account.name}</option>
                             ))
                     }
                 </select>
@@ -260,7 +237,7 @@ const AddEntryRow: FunctionComponent<AddEntryRowProps> = ({ entry, updateEntryCa
                 <StockAmountModal visible={showStockAmountModal} setVisible={setShowStockAmountModal} setAmountCallback={setStockAmount} />
             </td>
             <td>
-                <input type="date" value={formatDateForInput(entry.date)} onChange={(event) => updateEntryCallback({ id: entry.id, date: new Date(Date.parse(event.target.value).valueOf() + 14400000).valueOf() })} />
+                <input type="date" value={formatDateForInput(entry.date)} onChange={(event) => updateEntryCallback({ id: entry.id, date: new Date(Date.parse(event.target.value).valueOf()).valueOf() })} />
             </td>
             <td>
                 <input type="text" value={entry.category} onChange={(event) => updateEntryCallback({ id: entry.id, category: event.target.value })} />

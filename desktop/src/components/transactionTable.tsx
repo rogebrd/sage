@@ -1,26 +1,26 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Account } from "../model/account";
-import { Entry } from "../model/entry";
 import { AccountType, EntryStyle } from "../model/enums";
-import { Transaction } from "../model/transaction";
 import { formatDate, getAmountString, getStockAmountString } from "../util/helpers";
 import { Card } from "./base/card";
 import "../styles/transactionTable.scss";
 import { Button } from "./base/button";
+import { Entry, Transaction } from "../types";
+import { useSageContext } from "../data/provider";
 
 type TransactionTableProps = {
-    accounts: Account[],
-    entries: Entry[],
-    transactions: Transaction[],
-    updatedEntryCallback: Function
-    updatedTransactionCallback: Function,
 }
 
-export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ accounts, transactions, entries, updatedTransactionCallback, updatedEntryCallback }) => {
+export const TransactionTable: FunctionComponent<TransactionTableProps> = () => {
+    const { resourceManager, state } = useSageContext();
+
+    useEffect(() => {
+        resourceManager.transactionTable();
+    }, []);
 
     const renderAmount = (entry: Entry) => {
         if (typeof entry.amount === 'number') {
-            return getAmountString(Math.abs(entry.getValue(new Date(entry.date))), entry.getAccount(accounts)?.type === AccountType.POINT);
+            return getAmountString(entry.amount, false);
         } else {
             return getStockAmountString(entry.amount);
         }
@@ -31,11 +31,11 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
             <table className="transaction-table">
                 <tbody className="transaction-table__body" key={transaction.id}>
                     {
-                        transaction.getEntries(entries).map((entry) => (
+                        transaction.entries.map((entry) => (
                             <tr key={entry.id} className="transaction-table__body__row" >
                                 <td className="transaction-table__body__row--category">{entry.category ? (<span className="bubble">{entry.category}</span>) : null}</td>
-                                <td className="transaction-table__body__row--account">{accounts.find((account) => account.id === entry.accountId)?.name}</td>
-                                <td className="transaction-table__body__row--date">{formatDate(new Date(entry.date))}</td>
+                                <td className="transaction-table__body__row--account">{state.accounts.find((account) => account.id === entry.accountId)?.name}</td>
+                                <td className="transaction-table__body__row--date">{formatDate(entry.date)}</td>
                                 <td className="transaction-table__body__row--debit">{entry.style === EntryStyle.DEBIT ? renderAmount(entry) : ''}</td>
                                 <td className="transaction-table__body__row--credit">{entry.style === EntryStyle.CREDIT ? `(${renderAmount(entry)})` : ''}</td>
                                 <td className="transaction-table__body__row--description">{entry.description}</td>
@@ -69,7 +69,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ acc
                 </thead>
             </table>
             {
-                transactions.map((transaction) => {
+                state.transactions.map((transaction) => {
                     return renderTransaction(transaction);
                 })
             }

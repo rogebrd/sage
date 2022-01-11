@@ -25,7 +25,7 @@ class Transaction:
 
     def from_dynamodb(dynamo_entry):
         return Transaction(
-            id=dynamo_entry['AccountId']['S'],
+            id=dynamo_entry['TransactionId']['S'],
             entry_ids=dynamo_entry['EntryIds']['SS'],
             date=dynamo_entry['Date']['N']
         )

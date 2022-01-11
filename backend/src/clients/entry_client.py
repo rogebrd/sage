@@ -63,13 +63,13 @@ class EntryClient:
             response = self.dynamodb.batch_get_item(
                     RequestItems={
                         self.entry_table_name: {
-                            'Keys': [{'EntryId': entry_id} for entry_id in entry_ids],
+                            'Keys': [{'EntryId': {'S': entry_id}} for entry_id in entry_ids],
                             'ConsistentRead': True
                         }
                     },
                     ReturnConsumedCapacity='TOTAL'
                 )
-            data = response['Items']
+            data = response['Responses'][self.entry_table_name]
 
             return [Entry.from_dynamodb(entry) for entry in data]
         except Exception as e:
