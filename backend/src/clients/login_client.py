@@ -8,8 +8,8 @@ from clients.token_client import TokenClient
 LOGIN_TOKEN_KEY = "LOGIN_SHA"
 ACCESS_TOKEN_KEY = "ACCESS_TOKEN"
 
-class LoginClient:
 
+class LoginClient:
     def __init__(self, token_client: TokenClient):
         self.logger = logging.getLogger("LoginClient")
         self.token_client = token_client
@@ -17,18 +17,16 @@ class LoginClient:
 
     def login(self, request: request) -> Optional[str]:
         request_data = request.get_data()
-        login_sha = json.loads(request_data)['login_sha']
+        login_sha = json.loads(request_data)["login_sha"]
         expected = self.token_client.get_token(LOGIN_TOKEN_KEY)
         if expected == login_sha:
-            return {
-                "access_token": self.access_token
-            }
+            return {"access_token": self.access_token}
         else:
             self.logger.warn("Invalid Login Attempt")
-    
+
     def validate_request_auth(self, request):
         request_headers = request.headers
-        auth_header_value = request_headers.get('Authorization')
+        auth_header_value = request_headers.get("Authorization")
         if auth_header_value is None:
             self.logger.info("Authentication Header not present")
             raise Exception("Authentication Header not present")
@@ -41,5 +39,3 @@ class LoginClient:
         else:
             self.logger.info("Authentication Header invalid")
             raise Exception("Authentication Header invalid")
-
-    

@@ -7,9 +7,10 @@ import os
 
 from util import generate_uuid_key
 
-print('Loading function')
+print("Loading function")
 
-dynamodb = boto3.client('dynamodb', region_name='us-west-2')
+dynamodb = boto3.client("dynamodb", region_name="us-west-2")
+
 
 def get_home(logger):
     try:
@@ -17,16 +18,19 @@ def get_home(logger):
         transaction_table_name = get_transaction_table_name()
         entry_table_name = get_entry_table_name()
 
-        logger.info('configurations retrieved: %s, %s, %s' % (account_table_name, transaction_table_name, entry_table_name))
+        logger.info(
+            "configurations retrieved: %s, %s, %s"
+            % (account_table_name, transaction_table_name, entry_table_name)
+        )
 
         accounts = scan_table(account_table_name)
         transactions = scan_table(transaction_table_name)
         entries = scan_table(entry_table_name)
 
         response_body = {
-            'accounts': accounts,
-            'transactions': transactions,
-            'entries': entries
+            "accounts": accounts,
+            "transactions": transactions,
+            "entries": entries,
         }
 
         response = json.dumps(response_body)
@@ -34,71 +38,73 @@ def get_home(logger):
     except Exception as e:
         logger.error(e)
 
+
 def create_account(account, logger):
     try:
         account_table_name = get_account_table_name()
-        logger.info('configurations retrieved: %s' % (account_table_name))
+        logger.info("configurations retrieved: %s" % (account_table_name))
 
         body = json.loads(account)
-        account = body['account']
-        logger.info('Putting item: {}'.format(account))
+        account = body["account"]
+        logger.info("Putting item: {}".format(account))
         dynamodb.put_item(
             TableName=account_table_name,
             Item={
-                'AccountId': {'S': account.get('id')},
-                'Name': {'S': account.get('name')},
-                'Type': {'S': account.get('type')},
-                'Category': {'S': account.get('category')},
-                'ParentAccountId': {'S': account.get('parentAccountId', "")},
-                'MaxValue': {'S': account.get('maxValue', "")}
-            }
+                "AccountId": {"S": account.get("id")},
+                "Name": {"S": account.get("name")},
+                "Type": {"S": account.get("type")},
+                "Category": {"S": account.get("category")},
+                "ParentAccountId": {"S": account.get("parentAccountId", "")},
+                "MaxValue": {"S": account.get("maxValue", "")},
+            },
         )
 
         return None
     except Exception as e:
         logger.error(e)
 
+
 def create_transaction(transaction, logger):
     try:
         transaction_table_name = get_transaction_table_name()
         entry_table_name = get_entry_table_name()
-        logger.info('configurations retrieved: %s %s' % (transaction_table_name, entry_table_name))
+        logger.info(
+            "configurations retrieved: %s %s"
+            % (transaction_table_name, entry_table_name)
+        )
 
         body = json.loads(transaction)
-        transaction = body['transaction']
-        logger.info('Putting item: {}'.format(transaction))
+        transaction = body["transaction"]
+        logger.info("Putting item: {}".format(transaction))
         transaction_key = generate_uuid_key()
 
-        entries = body['entries']
+        entries = body["entries"]
         entry_keys = []
         for entry in entries:
             entry_key = generate_uuid_key()
-            logger.info('Putting item: {}'.format(entry))
+            logger.info("Putting item: {}".format(entry))
             item = {
-                    'EntryId': {'S': entry_key},
-                    'AccountId': {'S': entry.get('accountId')},
-                    'TransactionId': {'S': transaction_key},
-                    'Style': {'S': entry.get('style')},
-                    'Amount': {'S': str(entry.get('amount'))},
-                    'Date': {'N': entry.get('date')},
-                    'Description': {'S': entry.get('description')},
-                    'Category': {'S': entry.get('category')},
-                }
-            if len(entry.get('tags')) != 0:
-                item['Tags'] = {'SS': entry.get('tags')}
-            dynamodb.put_item(
-                TableName=entry_table_name,
-                Item=item
-            )
+                "EntryId": {"S": entry_key},
+                "AccountId": {"S": entry.get("accountId")},
+                "TransactionId": {"S": transaction_key},
+                "Style": {"S": entry.get("style")},
+                "Amount": {"S": str(entry.get("amount"))},
+                "Date": {"N": entry.get("date")},
+                "Description": {"S": entry.get("description")},
+                "Category": {"S": entry.get("category")},
+            }
+            if len(entry.get("tags")) != 0:
+                item["Tags"] = {"SS": entry.get("tags")}
+            dynamodb.put_item(TableName=entry_table_name, Item=item)
             entry_keys.append(entry_key)
 
         dynamodb.put_item(
             TableName=transaction_table_name,
             Item={
-                'TransactionId': {'S': transaction_key},
-                'Date': {'N': transaction.get('date')},
-                'EntryIds': {'SS': entry_keys},
-            }
+                "TransactionId": {"S": transaction_key},
+                "Date": {"N": transaction.get("date")},
+                "EntryIds": {"SS": entry_keys},
+            },
         )
 
         return None
@@ -107,27 +113,27 @@ def create_transaction(transaction, logger):
 
 
 def scan_table(table_name):
-    response = dynamodb.scan(
-        TableName=table_name
-    )
-    data = response['Items']
+    response = dynamodb.scan(TableName=table_name)
+    data = response["Items"]
 
-    while 'LastEvaluatedKey' in response:
+    while "LastEvaluatedKey" in response:
         response = dynamodb.scan(
-            TableName=table_name,
-            ExclusiveStartKey=response['LastEvaluatedKey']
+            TableName=table_name, ExclusiveStartKey=response["LastEvaluatedKey"]
         )
-        data.extend(response['Items'])
+        data.extend(response["Items"])
 
     return data
+
 
 def get_account_table_name():
     account_table_name = os.getenv("ACCOUNT_TABLE_NAME")
     return account_table_name
 
+
 def get_transaction_table_name():
     transaction_table_name = os.getenv("TRANSACTION_TABLE_NAME")
     return transaction_table_name
+
 
 def get_entry_table_name():
     entry_table_name = os.getenv("ENTRY_TABLE_NAME")
