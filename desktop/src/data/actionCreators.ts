@@ -1,12 +1,16 @@
-import { Transaction } from "../types";
-import { NavigateAction, SageActionType, SetAccountsAction, SetSummaryAction, SetTransactionsAction } from "./actions";
-import { NavigationState } from "./state";
+import { Transaction } from '../types';
+import {
+    NavigateAction,
+    SageActionType,
+    SetAccountsAction,
+    SetSummaryAction,
+    SetTransactionsAction,
+} from './actions';
+import { NavigationState } from './state';
 
-export const navigate = (
-    destination: NavigationState
-): NavigateAction => ({
+export const navigate = (destination: NavigationState): NavigateAction => ({
     type: SageActionType.NAVIGATE,
-    destination: destination
+    destination: destination,
 });
 
 export const setSummaryData = (
@@ -19,19 +23,17 @@ export const setSummaryData = (
     netWorth: netWorth,
     categoryValues: categoryValues,
     typeValues: typeValues,
-    lastUpdated: lastUpdated
-})
+    lastUpdated: lastUpdated,
+});
 
 export const setTransactions = (
     transactions: Transaction[]
 ): SetTransactionsAction => ({
     type: SageActionType.SET_TRANSACTIONS,
-    transactions: transactions
-})
+    transactions: transactions,
+});
 
-export const setAccounts = (
-    accounts: any[]
-): SetAccountsAction => ({
+export const setAccounts = (accounts: any[]): SetAccountsAction => ({
     type: SageActionType.SET_ACCOUNTS,
-    accounts: accounts
-})
+    accounts: accounts,
+});

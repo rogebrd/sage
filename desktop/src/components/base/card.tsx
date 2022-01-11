@@ -1,16 +1,12 @@
-import { Container } from "@material-ui/core"
-import { FunctionComponent } from "react"
+import { Container } from '@material-ui/core';
+import { FunctionComponent } from 'react';
 
-type CardProps = {
-
-}
+type CardProps = {};
 
 export const Card: FunctionComponent<CardProps> = ({ children }) => {
     return (
         <Container className="card">
-            <div className="card--holder">
-                {children}
-            </div>
+            <div className="card--holder">{children}</div>
         </Container>
-    )
-}
+    );
+};

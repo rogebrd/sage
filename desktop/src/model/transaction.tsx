@@ -1,4 +1,4 @@
-import { Entry } from "./entry";
+import { Entry } from './entry';
 
 export interface TransactionOptions {
     id: string;
@@ -6,7 +6,6 @@ export interface TransactionOptions {
 }
 
 export class Transaction implements TransactionOptions {
-
     constructor(options: TransactionOptions) {
         this.id = options.id;
         this.entryIds = options.entryIds;
@@ -16,6 +15,6 @@ export class Transaction implements TransactionOptions {
     entryIds: string[];
 
     getEntries(entries: Entry[]) {
-        return entries.filter((entry) => this.entryIds.includes(entry.id))
+        return entries.filter((entry) => this.entryIds.includes(entry.id));
     }
 }

@@ -1,8 +1,8 @@
-import { Transaction } from "../types"
+import { Transaction } from '../types';
 
 export enum NavigationState {
-    LOGIN = "LOGIN",
-    HOME = "HOME"
+    LOGIN = 'LOGIN',
+    HOME = 'HOME',
 }
 
 export interface SageState {
@@ -23,6 +23,6 @@ export const createInitialState = (): SageState => {
         typeValues: {},
         transactions: [],
         accounts: [],
-        lastUpdated: new Date()
-    }
-}
+        lastUpdated: new Date(),
+    };
+};

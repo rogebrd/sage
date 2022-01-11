@@ -1,4 +1,4 @@
-@import "colors";
+@import 'colors';
 
 .modal {
     position: absolute;
@@ -29,7 +29,6 @@
 
     &__action {
         height: 10%;
-
 
         &--submit {
             background: $ming;

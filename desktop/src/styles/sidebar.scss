@@ -34,7 +34,8 @@
         }
     }
 
-    &__type, &__category {
+    &__type,
+    &__category {
         height: 40px;
         display: flex;
         justify-content: space-between;
@@ -61,7 +62,7 @@
 
     &__accounts {
         color: $text-secondary;
-        
+
         &--account {
             height: 32px;
             display: flex;

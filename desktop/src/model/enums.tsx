@@ -1,22 +1,32 @@
 export enum EntryStyle {
     DEBIT,
-    CREDIT
+    CREDIT,
 }
 
 export enum AccountType {
     CASH,
     INVESTMENT,
     LIABILITY,
-    POINT
+    POINT,
 }
 
 export enum AccountCategory {
     DAILY,
     SAVINGS,
     RETIREMENT,
-    SPECIAL
+    SPECIAL,
 }
 
 export const allEntryStyles = [EntryStyle.CREDIT, EntryStyle.DEBIT];
-export const allAccountTypes = [AccountType.CASH, AccountType.INVESTMENT, AccountType.LIABILITY, AccountType.POINT];
-export const allAccountCategories = [AccountCategory.DAILY, AccountCategory.SAVINGS, AccountCategory.RETIREMENT, AccountCategory.SPECIAL];
+export const allAccountTypes = [
+    AccountType.CASH,
+    AccountType.INVESTMENT,
+    AccountType.LIABILITY,
+    AccountType.POINT,
+];
+export const allAccountCategories = [
+    AccountCategory.DAILY,
+    AccountCategory.SAVINGS,
+    AccountCategory.RETIREMENT,
+    AccountCategory.SPECIAL,
+];

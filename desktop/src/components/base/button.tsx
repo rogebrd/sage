@@ -1,14 +1,20 @@
-import React, { FunctionComponent } from "react";
-import "../../styles/button.scss";
+import React, { FunctionComponent } from 'react';
+import '../../styles/button.scss';
 
 type ButtonProps = {
-    text?: string,
-    onClick?: any,
-    className?: string
-}
+    text?: string;
+    onClick?: any;
+    className?: string;
+};
 
-export const Button: FunctionComponent<ButtonProps> = ({ text, onClick, className }) => {
+export const Button: FunctionComponent<ButtonProps> = ({
+    text,
+    onClick,
+    className,
+}) => {
     return (
-        <button onClick={onClick} className={className}>{text}</button>
+        <button onClick={onClick} className={className}>
+            {text}
+        </button>
     );
-}
+};

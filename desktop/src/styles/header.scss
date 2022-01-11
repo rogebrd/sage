@@ -1,4 +1,4 @@
-@import "colors";
+@import 'colors';
 
 .header {
     margin: 0;
@@ -8,6 +8,6 @@
     flex-flow: column;
 
     &__text {
-      color: $resin-black;
+        color: $resin-black;
     }
 }

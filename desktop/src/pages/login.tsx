@@ -22,16 +22,18 @@ export const LoginPage: FunctionComponent = () => {
     return (
         <div className="app">
             <div className="app__header">
-                <h1 className="app__header__text">
-                    Sage
-                </h1>
+                <h1 className="app__header__text">Sage</h1>
             </div>
             <div className="app__content">
                 <div className="app__content__login">
-                    <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
                     <Button onClick={login}>Login</Button>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

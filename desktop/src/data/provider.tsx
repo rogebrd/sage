@@ -1,9 +1,9 @@
-import { createContext, FunctionComponent, useContext } from "react";
-import { SageActions } from "./actions";
-import { sageReducer } from "./reducer";
-import { ResourceManager } from "./resourceManager"
-import { createInitialState, NavigationState, SageState } from "./state";
-import { useEnhancedReducer } from "./util";
+import { createContext, FunctionComponent, useContext } from 'react';
+import { SageActions } from './actions';
+import { sageReducer } from './reducer';
+import { ResourceManager } from './resourceManager';
+import { createInitialState, NavigationState, SageState } from './state';
+import { useEnhancedReducer } from './util';
 
 export type Dispatch = (action: SageActions) => SageState;
 
@@ -25,21 +25,21 @@ export const SageContextProvider: FunctionComponent = ({ children }) => {
     const value = {
         resourceManager: resourceManager,
         state: state,
-        dispatch: dispatch
+        dispatch: dispatch,
     };
 
     return (
-        <SageContext.Provider value={value} >
-            {children}
-        </SageContext.Provider>
+        <SageContext.Provider value={value}>{children}</SageContext.Provider>
     );
-}
+};
 
 export const useSageContext = (): SageContextContent => {
     const context = useContext(SageContext);
     if (context === null) {
-        throw new Error('SageContext must be used within a SageContextProvider')
+        throw new Error(
+            'SageContext must be used within a SageContextProvider'
+        );
     }
 
     return context;
-}
+};

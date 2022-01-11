@@ -1,4 +1,4 @@
-import { EntryStyle } from "./model/enums";
+import { EntryStyle } from './model/enums';
 
 export type Transaction = {
     id: string;
@@ -21,7 +21,7 @@ export type Entry = {
     category?: string | undefined;
     tags?: string[] | undefined;
     description?: string | undefined;
-}
+};
 
 // RAW TYPES
 // ***********************************
@@ -35,10 +35,10 @@ export type EntryRaw = {
     category?: string | undefined;
     tags?: string[] | undefined;
     description?: string | undefined;
-}
+};
 
 export type TransactionRaw = {
     id: string;
     date: string;
     entries: EntryRaw[];
-}
+};

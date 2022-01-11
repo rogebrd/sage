@@ -1,9 +1,9 @@
-import React, { FunctionComponent } from "react";
-import "../../styles/header.scss";
+import React, { FunctionComponent } from 'react';
+import '../../styles/header.scss';
 
 type HeaderProps = {
-    text: string
-}
+    text: string;
+};
 
 export const Header: FunctionComponent<HeaderProps> = ({ text }) => {
     return (
@@ -11,4 +11,4 @@ export const Header: FunctionComponent<HeaderProps> = ({ text }) => {
             <h2 className="header__text">{text}</h2>
         </div>
     );
-}
+};

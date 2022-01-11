@@ -1,5 +1,5 @@
-import { SageActions, SageActionType } from "./actions";
-import { NavigationState, SageState } from "./state";
+import { SageActions, SageActionType } from './actions';
+import { NavigationState, SageState } from './state';
 
 export const sageReducer = (
     state: SageState,
@@ -9,25 +9,25 @@ export const sageReducer = (
         case SageActionType.NAVIGATE:
             return {
                 ...state,
-                navigationState: action.destination
+                navigationState: action.destination,
             };
         case SageActionType.SET_SUMMARY:
             return {
                 ...state,
                 netWorth: action.netWorth,
                 categoryValues: action.categoryValues,
-                typeValues: action.typeValues
+                typeValues: action.typeValues,
             };
         case SageActionType.SET_ACCOUNTS:
             return {
                 ...state,
-                accounts: action.accounts
-            }
+                accounts: action.accounts,
+            };
         case SageActionType.SET_TRANSACTIONS:
             return {
                 ...state,
-                transactions: action.transactions
-            }
+                transactions: action.transactions,
+            };
     }
     return state;
-}
+};

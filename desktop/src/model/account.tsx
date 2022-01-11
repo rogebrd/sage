@@ -1,5 +1,5 @@
-import { Entry } from "./entry";
-import { AccountCategory, AccountType } from "./enums";
+import { Entry } from './entry';
+import { AccountCategory, AccountType } from './enums';
 
 export interface AccountOptions {
     id: string;
@@ -11,7 +11,6 @@ export interface AccountOptions {
 }
 
 export class Account implements AccountOptions {
-
     constructor(options: AccountOptions) {
         this.id = options.id;
         this.name = options.name;
@@ -29,17 +28,24 @@ export class Account implements AccountOptions {
     maxValue: number | undefined;
 
     getEntries(allEntries: Entry[]) {
-        return allEntries.filter((entry) => entry.accountId === this.id)
+        return allEntries.filter((entry) => entry.accountId === this.id);
     }
 
     getValue(allEntries: Entry[], date: Date = new Date(), stockPrices?: any) {
         const entrySum = allEntries
             .filter((entry) => entry.accountId === this.id)
-            .reduce((total: number, current: Entry) => total + current.getValue(date, stockPrices), 0);
+            .reduce(
+                (total: number, current: Entry) =>
+                    total + current.getValue(date, stockPrices),
+                0
+            );
         return this.maxValue ? this.maxValue - entrySum : entrySum;
     }
 
     getChildAccounts(allAccounts: Account[]) {
-        return allAccounts.filter((account) => account.parentAccountId && account.parentAccountId === this.id)
+        return allAccounts.filter(
+            (account) =>
+                account.parentAccountId && account.parentAccountId === this.id
+        );
     }
 }

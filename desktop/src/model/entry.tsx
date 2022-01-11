@@ -1,5 +1,5 @@
-import { Account } from "./account";
-import { EntryStyle } from "./enums";
+import { Account } from './account';
+import { EntryStyle } from './enums';
 
 export interface EntryOptions {
     id?: string;
@@ -19,9 +19,14 @@ export interface StockAmount {
 }
 
 export class Entry implements EntryOptions {
-
     constructor(options: EntryOptions) {
-        if (!options.id || !options.accountId || options.style === undefined || options.amount === undefined || options.date === undefined) {
+        if (
+            !options.id ||
+            !options.accountId ||
+            options.style === undefined ||
+            options.amount === undefined ||
+            options.date === undefined
+        ) {
             throw new Error(``);
         }
 
@@ -50,13 +55,16 @@ export class Entry implements EntryOptions {
             return 0;
         }
 
-        const multiplier = (this.style === EntryStyle.CREDIT) ? -1 : 1;
+        const multiplier = this.style === EntryStyle.CREDIT ? -1 : 1;
 
         if (typeof this.amount === 'number') {
             return multiplier * this.amount;
         } else {
             // TODO update to reflect appreciation of ticket
-            const price = (stockPrices && stockPrices[this.amount.symbol] !== undefined) ? stockPrices[this.amount.symbol] : this.amount.unitPrice;
+            const price =
+                stockPrices && stockPrices[this.amount.symbol] !== undefined
+                    ? stockPrices[this.amount.symbol]
+                    : this.amount.unitPrice;
             return multiplier * this.amount.quantity * price;
         }
     }
@@ -64,5 +72,4 @@ export class Entry implements EntryOptions {
     getAccount(accounts: Account[]) {
         return accounts.filter((account) => account.id === this.id)[0];
     }
-
 }
