@@ -19,6 +19,7 @@ jobs:
           npm run build
       - name: Lint
         run: |
+          cd desktop/
           npm run lint
   backend:
     runs-on: ubuntu-latest
