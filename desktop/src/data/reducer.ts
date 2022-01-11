@@ -1,5 +1,5 @@
 import { SageActions, SageActionType } from './actions';
-import { NavigationState, SageState } from './state';
+import { SageState } from './state';
 
 export const sageReducer = (
     state: SageState,

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 import LoyaltyOutlinedIcon from '@material-ui/icons/LoyaltyOutlined';
 import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutlined';
@@ -19,7 +19,7 @@ export const Sidebar: FunctionComponent = () => {
 
     useEffect(() => {
         resourceManager.sidebar();
-    }, []);
+    }, [resourceManager]);
 
     const selectAccount = (accountId: string | null) => {
         resourceManager.transactionTable(accountId);
