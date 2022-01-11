@@ -41,5 +41,5 @@ export const formatDateForInput = (dateNumber: number | undefined) => {
     if (dateNumber) {
         date = new Date(dateNumber);
     }
-    return `${date.getFullYear()}-${date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth()}-${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}`
+    return `${date.getFullYear()}-${date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)}-${date.getDate() < 9 ? '0' + (date.getDate() + 1) : (date.getDate() + 1)}`
 }

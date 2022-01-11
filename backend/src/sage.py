@@ -5,6 +5,8 @@ import json
 import boto3
 import os
 
+from util import generate_uuid_key
+
 print('Loading function')
 
 dynamodb = boto3.client('dynamodb', region_name='us-west-2')
@@ -65,22 +67,17 @@ def create_transaction(transaction, logger):
         body = json.loads(transaction)
         transaction = body['transaction']
         logger.info('Putting item: {}'.format(transaction))
-        dynamodb.put_item(
-            TableName=transaction_table_name,
-            Item={
-                'TransactionId': {'S': transaction.get('id')},
-                'Date': {'N': transaction.get('date')},
-                'EntryIds': {'SS': transaction.get('entryIds')},
-            }
-        )
+        transaction_key = generate_uuid_key()
 
         entries = body['entries']
+        entry_keys = []
         for entry in entries:
+            entry_key = generate_uuid_key()
             logger.info('Putting item: {}'.format(entry))
             item = {
-                    'EntryId': {'S': entry.get('id')},
+                    'EntryId': {'S': entry_key},
                     'AccountId': {'S': entry.get('accountId')},
-                    'TransactionId': {'S': entry.get('transactionId')},
+                    'TransactionId': {'S': transaction_key},
                     'Style': {'S': entry.get('style')},
                     'Amount': {'S': str(entry.get('amount'))},
                     'Date': {'N': entry.get('date')},
@@ -93,6 +90,16 @@ def create_transaction(transaction, logger):
                 TableName=entry_table_name,
                 Item=item
             )
+            entry_keys.append(entry_key)
+
+        dynamodb.put_item(
+            TableName=transaction_table_name,
+            Item={
+                'TransactionId': {'S': transaction_key},
+                'Date': {'N': transaction.get('date')},
+                'EntryIds': {'SS': entry_keys},
+            }
+        )
 
         return None
     except Exception as e:

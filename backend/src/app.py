@@ -123,7 +123,10 @@ def handle_table():
     login_client.validate_request_auth(request)
 
     transactions = transaction_client.get_recent_transactions()
-    entry_ids = [entry for entry in (transaction.entry_ids for transaction in transactions)]
+    entry_ids = []
+    for transaction in transactions:
+        for id in transaction.entry_ids:
+            entry_ids.append(id)
     entries = entry_client.get_entries(entry_ids)
     # format json
     response_json = {

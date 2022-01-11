@@ -29,13 +29,17 @@ class LoginClient:
     def validate_request_auth(self, request):
         request_headers = request.headers
         auth_header_value = request_headers.get('Authorization')
+        if auth_header_value is None:
+            self.logger.info("Authentication Header not present")
+            raise Exception("Authentication Header not present")
+
         auth_token = auth_header_value.replace("Bearer ", "")
 
         if auth_token == self.access_token:
             self.logger.info("Successfully authenticated Request")
             return
         else:
-            self.logger.info("Authentication Header not present or invalid")
-            raise Exception("Authentication Header not present or invalid")
+            self.logger.info("Authentication Header invalid")
+            raise Exception("Authentication Header invalid")
 
     

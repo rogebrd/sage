@@ -12,23 +12,13 @@ import { Star } from "@material-ui/icons";
 import "../styles/sidebar.scss";
 import { getAmountString, prettifyEnum } from "../util/helpers";
 import { Card } from "./base/card";
-import { client } from "../util/axios";
+import { useSageContext } from "../data/provider";
 
 export const Sidebar: FunctionComponent = () => {
-    const [netWorth, setNetWorth] = useState<number>(0);
-    const [categoryValues, setCategoryValues] = useState({});
-    const [typeValues, setTypeValues] = useState({});
+    const { resourceManager, state } = useSageContext();
 
     useEffect(() => {
-        client.get('/sidebar')
-            .then((response) => {
-                setNetWorth(response.data.net_worth);
-                setCategoryValues(response.data.category_sums)
-                setTypeValues(response.data.type_data)
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+        resourceManager.sidebar();
     }, []);
 
     const getIconForCategory = (category: AccountCategory) => {
@@ -65,27 +55,32 @@ export const Sidebar: FunctionComponent = () => {
     }
 
     const renderAccount = (accountId: number, accountName: string, accountValue: number, isPoint: boolean, isRemaining: boolean, isChildAccount: boolean = false) => (
-        <div key={accountId} className="sidebar__accounts--account">
-            <p>
-                {
-                    isChildAccount ? childAccountIcon : null
-                }
-                {accountName}
-            </p>
-            <p>
-                {getAmountString(accountValue, isPoint)}
-                {
-                    isRemaining ? (
-                        <span className="subtext">
-                            rem.
-                        </span>
-                    ) : null
-                }
-                {
-                    isPoint ? pointIcon : null
-                }
-            </p>
-        </div>
+        <>
+            {(accountValue !== 0) ? (
+                <div key={accountId} className="sidebar__accounts--account">
+                    <p>
+                        {
+                            isChildAccount ? childAccountIcon : null
+                        }
+                        {accountName}
+                    </p>
+                    <p>
+                        {getAmountString(accountValue, isPoint)}
+                        {
+                            isRemaining ? (
+                                <span className="subtext">
+                                    rem.
+                                </span>
+                            ) : null
+                        }
+                        {
+                            isPoint ? pointIcon : null
+                        }
+                    </p>
+                </div>
+            ) : null
+            }
+        </>
     );
 
     const getChildAccounts = (accountId: string, accounts: any[]) => {
@@ -109,16 +104,16 @@ export const Sidebar: FunctionComponent = () => {
         <div className="sidebar" >
             <Card>
                 <span className="sidebar__total">
-                    <h1>${Math.floor(netWorth).toLocaleString('en-US')}</h1>
+                    <h1>${Math.floor(state.netWorth).toLocaleString('en-US')}</h1>
                     <h2>.{
-                        Math.round((netWorth - Math.floor(netWorth)) * 100).toLocaleString('en-US')
+                        Math.round((state.netWorth - Math.floor(state.netWorth)) * 100).toLocaleString('en-US')
                     }
                     </h2>
                 </span>
             </Card>
             <Card>
                 {
-                    Object.entries(categoryValues).map((categoryEntry) => {
+                    Object.entries(state.categoryValues).map((categoryEntry) => {
                         const categoryValue = Number.parseFloat(categoryEntry[1] as string);
                         const category = AccountCategory[categoryEntry[0] as keyof typeof AccountCategory];
                         return (
@@ -161,7 +156,7 @@ export const Sidebar: FunctionComponent = () => {
                 }
             </Card>
             {
-                Object.entries(typeValues).map((typeEntry) => {
+                Object.entries(state.typeValues).map((typeEntry) => {
                     const typeBlob = typeEntry[1] as any;
                     const typeAccounts: any[] = typeBlob.accounts;
                     const type = AccountType[typeEntry[0] as keyof typeof AccountType]

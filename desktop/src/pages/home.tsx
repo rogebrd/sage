@@ -12,40 +12,8 @@ import { TransactionTable } from '../components/transactionTable';
 import { AddTransactionModal } from '../components/addTransactionModal';
 
 export const HomePage: FunctionComponent = () => {
-    const [accounts, setAccounts] = useState<Account[]>([]);
-    const [entries, setEntries] = useState<Entry[]>([]);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-
     const [addAccountModalVisibility, setAddAccountModalVisibilty] = useState<boolean>(false);
     const [addTransactionModalVisibility, setAddTransactionModalVisibility] = useState<boolean>(false);
-
-    useEffect(() => {
-        client.get('/api/')
-            .then((response) => {
-                let accounts: Account[] = [];
-                let transactions: Transaction[] = [];
-                let entries: Entry[] = [];
-
-                response.data.accounts.forEach((account: string) => {
-                    accounts.push(accountFromDynamoDB(account));
-                });
-
-                response.data.transactions.forEach((transaction: string) => {
-                    transactions.push(transactionFromDynamoDB(transaction));
-                });
-
-                response.data.entries.forEach((rawEntry: string) => {
-                    entries.push(entryFromDynamoDB(rawEntry));
-                });
-
-                setAccounts(accounts);
-                setTransactions(transactions);
-                setEntries(entries);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }, []);
 
     return (
         <div className="app">
@@ -59,34 +27,16 @@ export const HomePage: FunctionComponent = () => {
             <div className="app__content">
                 <Sidebar />
                 <div className="app__content__main">
-                    <TransactionTable
-                        accounts={accounts}
-                        entries={entries}
-                        transactions={transactions}
-                        updatedTransactionCallback={(transaction: Transaction) => { setTransactions(transactions.map((t) => t.id === transaction.id ? transaction : t)) }}
-                        updatedEntryCallback={(updatedEntries: Entry[]) => {
-                            setEntries(entries.map((entry) => {
-                                const updated = updatedEntries.find((updatedEntry) => updatedEntry.id === entry.id);
-                                return updated ? updated : entry;
-                            }))
-                        }}
-                    />
+                    <TransactionTable />
                 </div>
             </div>
             <AddAccountModal
                 visible={addAccountModalVisibility}
                 setVisible={setAddAccountModalVisibilty}
-                accounts={accounts}
-                newAccountCallback={(account: Account) => setAccounts(accounts.concat(account))}
             />
             <AddTransactionModal
                 visible={addTransactionModalVisibility}
                 setVisible={setAddTransactionModalVisibility}
-                accounts={accounts}
-                entries={entries}
-                transactions={transactions}
-                newTransactionCallback={(transaction: Transaction) => { transactions.length !== 0 ? setTransactions(transactions.concat(transaction)) : setTransactions([transaction]) }}
-                newEntryCallback={(newEntries: Entry[]) => { entries.length !== 0 ? setEntries(entries.concat(newEntries)) : setEntries(newEntries) }}
             />
         </div>
     );
