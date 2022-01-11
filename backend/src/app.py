@@ -1,3 +1,4 @@
+import json
 from logging import Logger, log
 from clients.transaction_client import TransactionClient
 from flask import Flask, request
@@ -64,7 +65,7 @@ def handle_sidebar():
 
     accounts = account_client.get_all_accounts()
     for account in accounts:
-        entries = entry_client.get_entries_for_account(account)
+        entries = entry_client.get_entries_for_account_id(account.id)
         entry_values = [stock_client.get_entry_value(entry) for entry in entries]
         account_sum = functools.reduce(operator.add, entry_values, 0)
 
@@ -117,17 +118,31 @@ def handle_login():
 
     return login_client.login(request)
 
-@flask_app.route('/transaction/table', methods = ['GET'])
+@flask_app.route('/transaction/table', methods = ['POST'])
 def handle_table():
     log_request(request)
     login_client.validate_request_auth(request)
 
-    transactions = transaction_client.get_recent_transactions()
-    entry_ids = []
-    for transaction in transactions:
-        for id in transaction.entry_ids:
-            entry_ids.append(id)
-    entries = entry_client.get_entries(entry_ids)
+    body = request.get_data()
+    account_id = None
+    if body:
+        account_id = json.loads(body)['account_id']
+
+    transactions = []
+    entries = []
+    if account_id:
+        logger.info("In accountID section {}".format(account_id))
+        entries = entry_client.get_entries_for_account_id(account_id)
+        transaction_ids = list(set([entry.transaction_id for entry in entries]))
+        transactions = transaction_client.get_transactions(transaction_ids)
+        logger.info(transactions)
+    else:
+        transactions = transaction_client.get_recent_transactions()
+        entry_ids = []
+        for transaction in transactions:
+            for id in transaction.entry_ids:
+                entry_ids.append(id)
+        entries = entry_client.get_entries(entry_ids)
     # format json
     response_json = {
         "transactions": [transaction.to_json(entries) for transaction in transactions]

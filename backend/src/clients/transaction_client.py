@@ -54,5 +54,27 @@ class TransactionClient:
         except Exception as e:
             self.logger.error(e)
             return []
+
+    def get_transactions(self, transaction_ids: List[str]):
+        self.logger.info("Attempting to fetch transactions - {}".format(transaction_ids))
+        if len(transaction_ids) > 100:
+            self.logger.error("Batch Get can support a maximum of 100 items")
+
+        try:
+            response = self.dynamodb.batch_get_item(
+                    RequestItems={
+                        self.transaction_table_name: {
+                            'Keys': [{'TransactionId': {'S': transaction_id}} for transaction_id in transaction_ids],
+                            'ConsistentRead': True
+                        }
+                    },
+                    ReturnConsumedCapacity='TOTAL'
+                )
+            data = response['Responses'][self.transaction_table_name]
+
+            return [Transaction.from_dynamodb(entry) for entry in data]
+        except Exception as e:
+            self.logger.error(e)
+            return []
     
     

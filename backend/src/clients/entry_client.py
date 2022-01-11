@@ -31,10 +31,9 @@ class EntryClient:
             self.logger.error(e)
             return []
 
-    def get_entries_for_account(self, account: Account) -> Optional[List[Entry]]:
-        self.logger.info("Attempting to fetch all entries for account - {}".format(account.name))
+    def get_entries_for_account_id(self, account_id: str) -> Optional[List[Entry]]:
+        self.logger.info("Attempting to fetch all entries for account - {}".format(account_id))
         try:
-            account_id = account.id
             response = self.dynamodb.scan(
                     TableName=self.entry_table_name,
                     FilterExpression="AccountId = :account_id",

@@ -59,8 +59,14 @@ export class ResourceManager {
         })
     }
 
-    transactionTable() {
-        this.authClient?.get('/transaction/table').then((response) => {
+    transactionTable(accountId: string | null = null) {
+        let body;
+        if (accountId !== null) {
+            body = {
+                "account_id": accountId
+            }
+        }
+        this.authClient?.post('/transaction/table', body).then((response) => {
             const transactions: TransactionRaw[] = response.data.transactions;
             const normalizedTransactions = [];
             for (let transaction of transactions) {
@@ -90,8 +96,6 @@ export class ResourceManager {
             } catch (e) {
                 amount = Number.parseFloat(entry.amount)
             }
-            console.log(amount);
-            console.log(typeof amount)
             return {
                 id: entry.id,
                 accountId: entry.account_id,

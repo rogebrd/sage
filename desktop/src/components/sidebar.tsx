@@ -21,6 +21,10 @@ export const Sidebar: FunctionComponent = () => {
         resourceManager.sidebar();
     }, []);
 
+    const selectAccount = (accountId: string | null) => {
+        resourceManager.transactionTable(accountId);
+    };
+
     const getIconForCategory = (category: AccountCategory) => {
         if (category === AccountCategory.DAILY) {
             return (<LocalAtmOutlinedIcon className="daily" />)
@@ -54,10 +58,10 @@ export const Sidebar: FunctionComponent = () => {
         }
     }
 
-    const renderAccount = (accountId: number, accountName: string, accountValue: number, isPoint: boolean, isRemaining: boolean, isChildAccount: boolean = false) => (
+    const renderAccount = (accountId: string, accountName: string, accountValue: number, isPoint: boolean, isRemaining: boolean, isChildAccount: boolean = false) => (
         <>
             {(accountValue !== 0) ? (
-                <div key={accountId} className="sidebar__accounts--account">
+                <div key={accountId} className="sidebar__accounts--account" onClick={() => selectAccount(accountId)}>
                     <p>
                         {
                             isChildAccount ? childAccountIcon : null
@@ -103,7 +107,7 @@ export const Sidebar: FunctionComponent = () => {
     return (
         <div className="sidebar" >
             <Card>
-                <span className="sidebar__total">
+                <span className="sidebar__total" onClick={() => selectAccount(null)}>
                     <h1>${Math.floor(state.netWorth).toLocaleString('en-US')}</h1>
                     <h2>.{
                         Math.round((state.netWorth - Math.floor(state.netWorth)) * 100).toLocaleString('en-US')
