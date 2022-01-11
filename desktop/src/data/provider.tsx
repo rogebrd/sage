@@ -2,7 +2,7 @@ import { createContext, FunctionComponent, useContext } from 'react';
 import { SageActions } from './actions';
 import { sageReducer } from './reducer';
 import { ResourceManager } from './resourceManager';
-import { createInitialState, NavigationState, SageState } from './state';
+import { createInitialState, SageState } from './state';
 import { useEnhancedReducer } from './util';
 
 export type Dispatch = (action: SageActions) => SageState;
@@ -16,7 +16,7 @@ interface SageContextContent {
 const SageContext = createContext<SageContextContent | null>(null);
 
 export const SageContextProvider: FunctionComponent = ({ children }) => {
-    const [state, dispatch, getState] = useEnhancedReducer(
+    const [state, dispatch] = useEnhancedReducer(
         sageReducer,
         createInitialState()
     );

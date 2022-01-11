@@ -19,8 +19,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "format": "prettier --write \"**/**/*.{js,jsx,ts,tsx,css,scss}\"",
-    "lint": "prettier --check \"**/**/*.{js,jsx,ts,tsx,css,scss}\"",
+    "format": "prettier --write \"**/**/*.{js,jsx,ts,tsx,css,scss}\" && eslint --fix --ext .js,.ts,.tsx .",
+    "lint": "prettier --check \"**/**/*.{js,jsx,ts,tsx,css,scss}\" && eslint --ext .js,.ts,.tsx .",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

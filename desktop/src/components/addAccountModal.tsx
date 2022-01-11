@@ -1,5 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Account } from '../model/account';
+import React, { FunctionComponent, useState } from 'react';
 import { Button, Modal } from '@material-ui/core';
 import {
     AccountCategory,
@@ -22,7 +21,7 @@ export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({
     visible,
     setVisible,
 }) => {
-    const { resourceManager, state } = useSageContext();
+    const { state } = useSageContext();
     const [newAccountName, setNewAccountName] = useState('');
     const [newAccountType, setNewAccountType] = useState<AccountType>(
         AccountType.CASH
@@ -52,16 +51,6 @@ export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({
     const addAccount = (event: any) => {
         event.preventDefault();
         const id = getNextId();
-        let newAccount: Account = new Account({
-            id: id,
-            name: newAccountName,
-            type: newAccountType,
-            category: newAccountCategory,
-            maxValue: newAccountMaxValue
-                ? Number.parseFloat(newAccountMaxValue)
-                : undefined,
-            parentAccountId: newAccountParentAccountId,
-        });
         const newAccountJson = {
             account: {
                 id: id,

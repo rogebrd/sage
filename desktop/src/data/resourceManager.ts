@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { EntryStyle } from '../model/enums';
-import { Entry, EntryRaw, Transaction, TransactionRaw } from '../types';
+import { Entry, EntryRaw, TransactionRaw } from '../types';
 import {
     navigate,
     setAccounts,

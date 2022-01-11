@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Sidebar } from '../components/sidebar';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import { AddAccountModal } from '../components/addAccountModal';

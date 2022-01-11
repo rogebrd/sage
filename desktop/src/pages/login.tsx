@@ -17,7 +17,7 @@ export const LoginPage: FunctionComponent = () => {
         if (resourceManager.authenticated) {
             dispatch(navigate(NavigationState.HOME));
         }
-    }, []);
+    }, [dispatch, resourceManager]);
 
     return (
         <div className="app">

@@ -1,9 +1,4 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Account } from '../model/account';
 import { Button, Modal } from '@material-ui/core';
 import { allEntryStyles, EntryStyle } from '../model/enums';
@@ -39,7 +34,7 @@ export const AddTransactionModal: FunctionComponent<
 
     useEffect(() => {
         resourceManager.accounts();
-    }, []);
+    }, [resourceManager]);
 
     useEffect(() => {
         if (existingTransaction) {

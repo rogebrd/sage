@@ -1,6 +1,5 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Account } from '../model/account';
-import { AccountType, EntryStyle } from '../model/enums';
+import React, { FunctionComponent, useEffect } from 'react';
+import { EntryStyle } from '../model/enums';
 import {
     formatDate,
     getAmountString,
@@ -25,7 +24,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({
 
     useEffect(() => {
         resourceManager.transactionTable();
-    }, []);
+    }, [resourceManager]);
 
     const renderAmount = (entry: Entry) => {
         if (typeof entry.amount === 'number') {
