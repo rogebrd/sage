@@ -1,6 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import './styles/App.scss';
-import './styles/svg.scss';
+import React, { FunctionComponent } from 'react';
 import { HomePage } from '../pages/home';
 import { LoginPage } from '../pages/login';
 import { useSageContext } from './provider';
