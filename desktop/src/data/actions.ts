@@ -17,7 +17,8 @@ export interface SetSummaryAction {
     type: SageActionType.SET_SUMMARY,
     netWorth: number,
     categoryValues: any,
-    typeValues: any
+    typeValues: any,
+    lastUpdated: Date,
 }
 
 export interface SetTransactionsAction {

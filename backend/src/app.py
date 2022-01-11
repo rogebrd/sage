@@ -103,11 +103,14 @@ def handle_sidebar():
         if account.type != "POINT":
             net_worth += account_sum
 
+    update_time = stock_client.update_time
+
 
     response_json = {
         "net_worth": net_worth,
         "category_sums": category_sums,
-        "type_data": type_data
+        "type_data": type_data,
+        "update_time": update_time
     }
 
     return response_json

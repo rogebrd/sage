@@ -12,12 +12,14 @@ export const navigate = (
 export const setSummaryData = (
     netWorth: number,
     categoryValues: any,
-    typeValues: any
+    typeValues: any,
+    lastUpdated: Date
 ): SetSummaryAction => ({
     type: SageActionType.SET_SUMMARY,
     netWorth: netWorth,
     categoryValues: categoryValues,
-    typeValues: typeValues
+    typeValues: typeValues,
+    lastUpdated: lastUpdated
 })
 
 export const setTransactions = (

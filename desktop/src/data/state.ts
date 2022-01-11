@@ -12,6 +12,7 @@ export interface SageState {
     typeValues: any;
     transactions: Transaction[];
     accounts: any[];
+    lastUpdated: Date;
 }
 
 export const createInitialState = (): SageState => {
@@ -21,6 +22,7 @@ export const createInitialState = (): SageState => {
         categoryValues: {},
         typeValues: {},
         transactions: [],
-        accounts: []
+        accounts: [],
+        lastUpdated: new Date()
     }
 }

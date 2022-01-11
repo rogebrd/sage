@@ -55,7 +55,7 @@ export class ResourceManager {
     sidebar() {
         this.authClient?.get('/sidebar').then((response) => {
             const data = response.data;
-            this.dispatch(setSummaryData(data.net_worth, data.category_sums, data.type_data))
+            this.dispatch(setSummaryData(data.net_worth, data.category_sums, data.type_data, new Date(data.last_updated)))
         })
     }
 

@@ -237,7 +237,7 @@ const AddEntryRow: FunctionComponent<AddEntryRowProps> = ({ entry, updateEntryCa
                 <StockAmountModal visible={showStockAmountModal} setVisible={setShowStockAmountModal} setAmountCallback={setStockAmount} />
             </td>
             <td>
-                <input type="date" value={formatDateForInput(entry.date)} onChange={(event) => updateEntryCallback({ id: entry.id, date: new Date(Date.parse(event.target.value).valueOf()).valueOf() })} />
+                <input type="date" value={formatDateForInput(entry.date)} onChange={(event) => updateEntryCallback({ id: entry.id, date: new Date(Date.parse(event.target.value).valueOf() + 144000).valueOf() })} />
             </td>
             <td>
                 <input type="text" value={entry.category} onChange={(event) => updateEntryCallback({ id: entry.id, category: event.target.value })} />

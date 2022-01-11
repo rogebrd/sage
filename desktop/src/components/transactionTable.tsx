@@ -9,9 +9,10 @@ import { Entry, Transaction } from "../types";
 import { useSageContext } from "../data/provider";
 
 type TransactionTableProps = {
+    setAddTransactionModalVisibility: (addTransactionModalVisibility: boolean) => void;
 }
 
-export const TransactionTable: FunctionComponent<TransactionTableProps> = () => {
+export const TransactionTable: FunctionComponent<TransactionTableProps> = ({ setAddTransactionModalVisibility }) => {
     const { resourceManager, state } = useSageContext();
 
     useEffect(() => {
@@ -24,6 +25,10 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = () => 
         } else {
             return getStockAmountString(entry.amount);
         }
+    }
+
+    const sortTransactions = (a: Transaction, b: Transaction) => {
+        return b.date.valueOf() - a.date.valueOf();
     }
 
     const renderTransaction = (transaction: Transaction) => (
@@ -53,7 +58,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = () => 
             <div className="control">
                 <span className="control__filter">filter</span>
                 <span className="control__expand">expand</span>
-                <span className="control__add"><Button text="add transaction" /></span>
+                <span className="control__add"><Button text="add transaction" onClick={() => setAddTransactionModalVisibility(true)} /></span>
             </div>
             <table className="transaction-table">
                 <thead className="transaction-table--header">
@@ -69,7 +74,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = () => 
                 </thead>
             </table>
             {
-                state.transactions.map((transaction) => {
+                state.transactions.sort(sortTransactions).map((transaction) => {
                     return renderTransaction(transaction);
                 })
             }
