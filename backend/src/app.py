@@ -1,5 +1,7 @@
 import json
 from logging import Logger, log
+from model.account import Account
+from clients.subtotal_client import SubtotalClient
 from clients.transaction_client import TransactionClient
 from flask import Flask, request
 from clients.account_client import AccountClient
@@ -47,6 +49,7 @@ token_client = TokenClient()
 account_client = AccountClient()
 entry_client = EntryClient()
 transaction_client = TransactionClient()
+subtotal_client = SubtotalClient()
 stock_client = StockClient(token_client)
 login_client = LoginClient(token_client)
 
@@ -70,10 +73,7 @@ def handle_sidebar():
 
     accounts = account_client.get_all_accounts()
     for account in accounts:
-        entries = entry_client.get_entries_for_account_id(account.id)
-        entry_values = [stock_client.get_entry_value(entry) for entry in entries]
-        account_sum = functools.reduce(operator.add, entry_values, 0)
-
+        account_sum = get_account_value(account)
         if (
             account.max_value is not None
             and account.max_value != ""
@@ -207,6 +207,24 @@ def log_request(request):
     logger.info(
         "Beginning request to {} with method {}".format(request.path, request.method)
     )
+
+
+def get_account_value(account: Account):
+    subtotals = subtotal_client.get_account_subtotals(account)
+    account_sum = 0
+    if not subtotals:
+        entries = entry_client.get_entries_for_account_id(account.id)
+        entry_values = [stock_client.get_entry_value(entry) for entry in entries]
+        account_sum = functools.reduce(operator.add, entry_values, 0)
+        if account.type != "INVESTMENT":
+            subtotal_client.put_account_subtotal(account, account_sum)
+    else:
+        max_date = 0
+        for total in subtotals:
+            if total.date > max_date:
+                account_sum = total.subtotal_value
+
+    return account_sum
 
 
 if __name__ == "__main__":

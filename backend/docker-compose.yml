@@ -11,6 +11,7 @@ services:
       TRANSACTION_TABLE_NAME: sage-development-Transactions
       ENTRY_TABLE_NAME: sage-development-Entries
       TOKEN_TABLE_NAME: sage-development-Tokens
+      SUBTOTAL_TABLE_NAME: sage-development-Subtotal
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     ports: [ '5000:5000' ]
@@ -26,6 +27,7 @@ services:
       TRANSACTION_TABLE_NAME: sage-prod-Transactions
       ENTRY_TABLE_NAME: sage-prod-Entries
       TOKEN_TABLE_NAME: sage-prod-Tokens
+      SUBTOTAL_TABLE_NAME: sage-prod-Subtotal
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     ports: [ '5000:5000' ]
@@ -40,4 +42,5 @@ services:
       TRANSACTION_TABLE_NAME: sage-prod-Transactions
       ENTRY_TABLE_NAME: sage-prod-Entries
       TOKEN_TABLE_NAME: sage-prod-Tokens
+      SUBTOTAL_TABLE_NAME: sage-prod-Subtotal
     ports: [ '80:5000' ]
