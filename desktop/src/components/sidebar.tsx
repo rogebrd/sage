@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 import LoyaltyOutlinedIcon from '@material-ui/icons/LoyaltyOutlined';
 import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutlined';
@@ -13,13 +13,15 @@ import '../styles/sidebar.scss';
 import { getAmountString, prettifyEnum } from '../util/helpers';
 import { Card } from './base/card';
 import { useSageContext } from '../data/provider';
+import { Button } from './base/button';
 
 export const Sidebar: FunctionComponent = () => {
     const { resourceManager, state } = useSageContext();
+    const [showZeroValueAccounts, setShowZeroValueAccounts] = useState<boolean>(false);
 
     useEffect(() => {
         resourceManager.sidebar();
-    }, [resourceManager]);
+    }, []);
 
     const selectAccount = (accountId: string | null) => {
         resourceManager.transactionTable(accountId);
@@ -69,7 +71,7 @@ export const Sidebar: FunctionComponent = () => {
         isChildAccount: boolean = false
     ) => (
         <>
-            {accountValue !== 0 ? (
+            {accountValue !== 0 || showZeroValueAccounts ? (
                 <div
                     key={accountId}
                     className="sidebar__accounts--account"
@@ -124,6 +126,7 @@ export const Sidebar: FunctionComponent = () => {
                             (state.netWorth - Math.floor(state.netWorth)) * 100
                         ).toLocaleString('en-US')}
                     </h2>
+                    <Button onClick={() => setShowZeroValueAccounts(!showZeroValueAccounts)} text="+"/>
                 </span>
             </Card>
             <Card>

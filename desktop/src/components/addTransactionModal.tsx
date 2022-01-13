@@ -34,7 +34,7 @@ export const AddTransactionModal: FunctionComponent<
 
     useEffect(() => {
         resourceManager.accounts();
-    }, [resourceManager]);
+    }, []);
 
     useEffect(() => {
         if (existingTransaction) {

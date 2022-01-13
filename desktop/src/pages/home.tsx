@@ -18,7 +18,7 @@ export const HomePage: FunctionComponent = () => {
         <div className="app">
             <div className="app__header">
                 <h1 className="app__header__text">Sage</h1>
-                <p>Last Updated: {state.lastUpdated.toLocaleTimeString()}</p>
+                <p>Last Updated: {state.lastUpdated.toLocaleString()}</p>
                 <Button onClick={() => setAddAccountModalVisibilty(true)}>
                     A<SettingsOutlinedIcon />
                 </Button>

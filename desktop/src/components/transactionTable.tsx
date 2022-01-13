@@ -24,7 +24,7 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({
 
     useEffect(() => {
         resourceManager.transactionTable();
-    }, [resourceManager]);
+    }, []);
 
     const renderAmount = (entry: Entry) => {
         if (typeof entry.amount === 'number') {

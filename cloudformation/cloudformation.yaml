@@ -3,14 +3,14 @@ Resources:
   AccountTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub '${AWS::StackName}-Accounts'
-      BillingMode: 'PROVISIONED'
+      TableName: !Sub "${AWS::StackName}-Accounts"
+      BillingMode: "PROVISIONED"
       KeySchema:
-        - KeyType: 'HASH'
-          AttributeName: 'AccountId'
+        - KeyType: "HASH"
+          AttributeName: "AccountId"
       AttributeDefinitions:
-        - AttributeName: 'AccountId'
-          AttributeType: 'S'
+        - AttributeName: "AccountId"
+          AttributeType: "S"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -19,14 +19,14 @@ Resources:
   TransactionTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub '${AWS::StackName}-Transactions'
-      BillingMode: 'PROVISIONED'
+      TableName: !Sub "${AWS::StackName}-Transactions"
+      BillingMode: "PROVISIONED"
       KeySchema:
-        - KeyType: 'HASH'
-          AttributeName: 'TransactionId'
+        - KeyType: "HASH"
+          AttributeName: "TransactionId"
       AttributeDefinitions:
-        - AttributeName: 'TransactionId'
-          AttributeType: 'S'
+        - AttributeName: "TransactionId"
+          AttributeType: "S"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -35,14 +35,14 @@ Resources:
   EntryTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub '${AWS::StackName}-Entries'
-      BillingMode: 'PROVISIONED'
+      TableName: !Sub "${AWS::StackName}-Entries"
+      BillingMode: "PROVISIONED"
       KeySchema:
-        - KeyType: 'HASH'
-          AttributeName: 'EntryId'
+        - KeyType: "HASH"
+          AttributeName: "EntryId"
       AttributeDefinitions:
-        - AttributeName: 'EntryId'
-          AttributeType: 'S'
+        - AttributeName: "EntryId"
+          AttributeType: "S"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -51,14 +51,29 @@ Resources:
   TokenTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub '${AWS::StackName}-Tokens'
-      BillingMode: 'PROVISIONED'
+      TableName: !Sub "${AWS::StackName}-Tokens"
+      BillingMode: "PROVISIONED"
       KeySchema:
-        - KeyType: 'HASH'
-          AttributeName: 'TokenId'
+        - KeyType: "HASH"
+          AttributeName: "TokenId"
       AttributeDefinitions:
-        - AttributeName: 'TokenId'
-          AttributeType: 'S'
+        - AttributeName: "TokenId"
+          AttributeType: "S"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  SubtotalTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-Subtotal"
+      BillingMode: "PROVISIONED"
+      KeySchema:
+        - KeyType: "HASH"
+          AttributeName: "SubtotalId"
+      AttributeDefinitions:
+        - AttributeName: "SubtotalId"
+          AttributeType: "S"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
