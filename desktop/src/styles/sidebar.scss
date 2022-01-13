@@ -68,6 +68,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-radius: 6px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: antiquewhite;
+            }
+
+            &.selected {
+                border: 1px solid black;
+            }
 
             p {
                 display: inline;

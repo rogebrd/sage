@@ -13,6 +13,7 @@ export interface SageState {
     transactions: Transaction[];
     accounts: any[];
     lastUpdated: Date;
+    transactionTableView: string;
 }
 
 export const createInitialState = (): SageState => {
@@ -24,5 +25,6 @@ export const createInitialState = (): SageState => {
         transactions: [],
         accounts: [],
         lastUpdated: new Date(),
+        transactionTableView: ""
     };
 };

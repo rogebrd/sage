@@ -26,6 +26,7 @@ export const sageReducer = (
         case SageActionType.SET_TRANSACTIONS:
             return {
                 ...state,
+                transactionTableView: action.transactionTableView,
                 transactions: action.transactions,
             };
     }

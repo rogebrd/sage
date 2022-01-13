@@ -23,6 +23,7 @@ export interface SetSummaryAction {
 
 export interface SetTransactionsAction {
     type: SageActionType.SET_TRANSACTIONS;
+    transactionTableView: string;
     transactions: Transaction[];
 }
 

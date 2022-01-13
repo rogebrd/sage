@@ -22,6 +22,6 @@ class Subtotal:
             id=dynamo_entry["SubtotalId"]["S"],
             subtotal_type=dynamo_entry["SubtotalType"]["S"],
             subtotal_type_id=dynamo_entry["SubtotalTypeId"]["S"],
-            subtotal_value=dynamo_entry["Subtotal"]["S"],
-            date=dynamo_entry["UpdateTime"]["N"],
+            subtotal_value=float(dynamo_entry["Subtotal"]["N"]),
+            update_time=float(dynamo_entry["UpdateTime"]["N"]),
         )

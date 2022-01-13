@@ -25,7 +25,11 @@ export const Sidebar: FunctionComponent = () => {
     }, []);
 
     const selectAccount = (accountId: string | null) => {
-        resourceManager.transactionTable(accountId);
+        if(accountId && accountId === state.transactionTableView){
+            resourceManager.transactionTable();
+        }else {
+            resourceManager.transactionTable(accountId);
+        }
     };
 
     const getIconForCategory = (category: AccountCategory) => {
@@ -75,7 +79,7 @@ export const Sidebar: FunctionComponent = () => {
             {accountValue !== 0 || showZeroValueAccounts ? (
                 <div
                     key={accountId}
-                    className="sidebar__accounts--account"
+                    className={state.transactionTableView === accountId ? "sidebar__accounts--account selected" : "sidebar__accounts--account"}
                     onClick={() => selectAccount(accountId)}
                 >
                     <p>
@@ -83,7 +87,13 @@ export const Sidebar: FunctionComponent = () => {
                         {accountName}
                     </p>
                     <p>
-                        {getAmountString(accountValue, isPoint)}
+                        {accountValue < 0 ? (
+                                    <span className="negative">
+                                        {getAmountString(accountValue, isPoint)}
+                                    </span>
+                                ) : (
+                                    getAmountString(accountValue, isPoint)
+                                )}
                         {isRemaining ? (
                             <span className="subtext">rem.</span>
                         ) : null}
@@ -127,12 +137,6 @@ export const Sidebar: FunctionComponent = () => {
                             (state.netWorth - Math.floor(state.netWorth)) * 100
                         ).toLocaleString('en-US')}
                     </h2>
-                    <Button
-                        onClick={() =>
-                            setShowZeroValueAccounts(!showZeroValueAccounts)
-                        }
-                        text="+"
-                    />
                 </span>
             </Card>
             <Card>
@@ -177,6 +181,13 @@ export const Sidebar: FunctionComponent = () => {
                     );
                 })}
             </Card>
+            <div
+                onClick={() =>
+                    setShowZeroValueAccounts(!showZeroValueAccounts)
+                }
+            >
+                {showZeroValueAccounts ? "- Hide" : "+ Show"} net 0 accounts
+            </div>
             {Object.entries(state.typeValues).map((typeEntry) => {
                 const typeBlob = typeEntry[1] as any;
                 const typeAccounts: any[] = typeBlob.accounts;
