@@ -17,7 +17,8 @@ import { Button } from './base/button';
 
 export const Sidebar: FunctionComponent = () => {
     const { resourceManager, state } = useSageContext();
-    const [showZeroValueAccounts, setShowZeroValueAccounts] = useState<boolean>(false);
+    const [showZeroValueAccounts, setShowZeroValueAccounts] =
+        useState<boolean>(false);
 
     useEffect(() => {
         resourceManager.sidebar();
@@ -126,7 +127,12 @@ export const Sidebar: FunctionComponent = () => {
                             (state.netWorth - Math.floor(state.netWorth)) * 100
                         ).toLocaleString('en-US')}
                     </h2>
-                    <Button onClick={() => setShowZeroValueAccounts(!showZeroValueAccounts)} text="+"/>
+                    <Button
+                        onClick={() =>
+                            setShowZeroValueAccounts(!showZeroValueAccounts)
+                        }
+                        text="+"
+                    />
                 </span>
             </Card>
             <Card>

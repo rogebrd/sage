@@ -21,7 +21,10 @@ class SubtotalClient:
             response = self.dynamodb.scan(
                 TableName=self.subtotal_table_name,
                 FilterExpression="SubtotalTypeId = :account_id and SubtotalType = :subtotal_type",
-                ExpressionAttributeValues={":account_id": {"S": account.id}, ":subtotal_type": {"S": "account"}},
+                ExpressionAttributeValues={
+                    ":account_id": {"S": account.id},
+                    ":subtotal_type": {"S": "account"},
+                },
             )
             data = response["Items"]
 
@@ -48,11 +51,9 @@ class SubtotalClient:
                     "SubtotalType": {"S": "account"},
                     "SubtotalTypeId": {"S": account.id},
                     "Subtotal": {"N": str(value)},
-                    "UpdateTime": {"N": str(time.time())}
+                    "UpdateTime": {"N": str(time.time())},
                 },
             )
         except Exception as e:
             self.logger.error(e)
             return -1
-
-

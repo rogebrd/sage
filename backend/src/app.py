@@ -208,6 +208,7 @@ def log_request(request):
         "Beginning request to {} with method {}".format(request.path, request.method)
     )
 
+
 def get_account_value(account: Account):
     subtotals = subtotal_client.get_account_subtotals(account)
     account_sum = 0
@@ -222,7 +223,7 @@ def get_account_value(account: Account):
         for total in subtotals:
             if total.date > max_date:
                 account_sum = total.subtotal_value
-    
+
     return account_sum
 
 

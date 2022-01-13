@@ -1,5 +1,7 @@
 class Subtotal:
-    def __init__(self, id, subtotal_type, subtotal_type_id, subtotal_value, update_time):
+    def __init__(
+        self, id, subtotal_type, subtotal_type_id, subtotal_value, update_time
+    ):
         self.id = id
         self.subtotal_type = subtotal_type
         self.subtotal_type_id = subtotal_type_id
@@ -12,7 +14,7 @@ class Subtotal:
             self.subtotal_type,
             self.subtotal_type_id,
             self.subtotal_value,
-            self.update_time
+            self.update_time,
         )
 
     def from_dynamodb(dynamo_entry):
