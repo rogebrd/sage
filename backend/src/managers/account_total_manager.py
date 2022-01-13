@@ -42,7 +42,9 @@ class AccountTotalManager:
 
     def __compute_account_total(self, account: Account):
         entries = self.entry_client.get_entries_for_account_id(account.id)
-        entry_symbols = [entry.amount["symbol"] for entry in entries if type(entry.amount) != float]
+        entry_symbols = [
+            entry.amount["symbol"] for entry in entries if type(entry.amount) != float
+        ]
         self.stock_client.fetch_prices(entry_symbols)
         entry_values = [self.stock_client.get_entry_value(entry) for entry in entries]
         account_value = functools.reduce(operator.add, entry_values, 0)
