@@ -13,7 +13,6 @@ import '../styles/sidebar.scss';
 import { getAmountString, prettifyEnum } from '../util/helpers';
 import { Card } from './base/card';
 import { useSageContext } from '../data/provider';
-import { Button } from './base/button';
 
 export const Sidebar: FunctionComponent = () => {
     const { resourceManager, state } = useSageContext();
@@ -25,9 +24,9 @@ export const Sidebar: FunctionComponent = () => {
     }, []);
 
     const selectAccount = (accountId: string | null) => {
-        if(accountId && accountId === state.transactionTableView){
+        if (accountId && accountId === state.transactionTableView) {
             resourceManager.transactionTable();
-        }else {
+        } else {
             resourceManager.transactionTable(accountId);
         }
     };
@@ -79,7 +78,11 @@ export const Sidebar: FunctionComponent = () => {
             {accountValue !== 0 || showZeroValueAccounts ? (
                 <div
                     key={accountId}
-                    className={state.transactionTableView === accountId ? "sidebar__accounts--account selected" : "sidebar__accounts--account"}
+                    className={
+                        state.transactionTableView === accountId
+                            ? 'sidebar__accounts--account selected'
+                            : 'sidebar__accounts--account'
+                    }
                     onClick={() => selectAccount(accountId)}
                 >
                     <p>
@@ -88,12 +91,12 @@ export const Sidebar: FunctionComponent = () => {
                     </p>
                     <p>
                         {accountValue < 0 ? (
-                                    <span className="negative">
-                                        {getAmountString(accountValue, isPoint)}
-                                    </span>
-                                ) : (
-                                    getAmountString(accountValue, isPoint)
-                                )}
+                            <span className="negative">
+                                {getAmountString(accountValue, isPoint)}
+                            </span>
+                        ) : (
+                            getAmountString(accountValue, isPoint)
+                        )}
                         {isRemaining ? (
                             <span className="subtext">rem.</span>
                         ) : null}
@@ -182,11 +185,9 @@ export const Sidebar: FunctionComponent = () => {
                 })}
             </Card>
             <div
-                onClick={() =>
-                    setShowZeroValueAccounts(!showZeroValueAccounts)
-                }
+                onClick={() => setShowZeroValueAccounts(!showZeroValueAccounts)}
             >
-                {showZeroValueAccounts ? "- Hide" : "+ Show"} net 0 accounts
+                {showZeroValueAccounts ? '- Hide' : '+ Show'} net 0 accounts
             </div>
             {Object.entries(state.typeValues).map((typeEntry) => {
                 const typeBlob = typeEntry[1] as any;

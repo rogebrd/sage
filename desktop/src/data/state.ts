@@ -25,6 +25,6 @@ export const createInitialState = (): SageState => {
         transactions: [],
         accounts: [],
         lastUpdated: new Date(),
-        transactionTableView: ""
+        transactionTableView: '',
     };
 };

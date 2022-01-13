@@ -36,7 +36,9 @@ class StockClient:
             time_since_refresh = fetch_time - self.update_time
         else:
             time_since_refresh = 9999999
-        if time_since_refresh < STOCK_REFRESH_MINIMUM_INTERVAL and all(elem in self.current_prices  for elem in symbols):
+        if time_since_refresh < STOCK_REFRESH_MINIMUM_INTERVAL and all(
+            elem in self.current_prices for elem in symbols
+        ):
             self.logger.info("Refresh of symbols not needed")
             return
 

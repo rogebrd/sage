@@ -12,7 +12,13 @@ import operator
 
 
 class AccountTotalManager:
-    def __init__(self, account_client: AccountClient, subtotal_client: SubtotalClient, entry_client: EntryClient, stock_client: StockClient):
+    def __init__(
+        self,
+        account_client: AccountClient,
+        subtotal_client: SubtotalClient,
+        entry_client: EntryClient,
+        stock_client: StockClient,
+    ):
         self.logger = logging.getLogger("AccountTotalManager")
         self.account_client = account_client
         self.subtotal_client = subtotal_client
@@ -24,7 +30,7 @@ class AccountTotalManager:
         account_value = 0
         if self.account_status.get(account.id) != None:
             return self.account_status[account.id]
-        
+
         account_value = self.__compute_account_total(account)
         if account.type != "INVESTMENT":
             self.account_status[account.id] = account_value

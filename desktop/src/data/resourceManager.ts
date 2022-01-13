@@ -95,7 +95,12 @@ export class ResourceManager {
 
                 normalizedTransactions.push(normalizedTransaction);
             }
-            this.dispatch(setTransactions(normalizedTransactions, accountId ? accountId : ""));
+            this.dispatch(
+                setTransactions(
+                    normalizedTransactions,
+                    accountId ? accountId : ''
+                )
+            );
         });
     }
 

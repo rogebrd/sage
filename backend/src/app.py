@@ -50,7 +50,9 @@ transaction_client = TransactionClient()
 subtotal_client = SubtotalClient()
 stock_client = StockClient(token_client)
 login_client = LoginClient(token_client)
-account_total_manager = AccountTotalManager(account_client, subtotal_client, entry_client, stock_client)
+account_total_manager = AccountTotalManager(
+    account_client, subtotal_client, entry_client, stock_client
+)
 
 
 @flask_app.route("/")
