@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { EntryStyle } from '../model/enums';
 import {
     formatDate,
@@ -10,17 +10,18 @@ import '../styles/transactionTable.scss';
 import { Button } from './base/button';
 import { Entry, Transaction } from '../types';
 import { useSageContext } from '../data/provider';
+import { AddTransactionModal } from './addTransactionModal';
 
-type TransactionTableProps = {
-    setAddTransactionModalVisibility: (
-        addTransactionModalVisibility: boolean
-    ) => void;
-};
+type TransactionTableProps = {};
 
-export const TransactionTable: FunctionComponent<TransactionTableProps> = ({
-    setAddTransactionModalVisibility,
-}) => {
+export const TransactionTable: FunctionComponent<
+    TransactionTableProps
+> = () => {
     const { resourceManager, state } = useSageContext();
+    const [addTransactionModalVisibility, setAddTransactionModalVisibility] =
+        useState<boolean>(false);
+    const [transactionToEdit, setTransactionToEdit] =
+        useState<Transaction | null>(null);
 
     useEffect(() => {
         resourceManager.transactionTable();
@@ -38,9 +39,17 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({
         return b.date.valueOf() - a.date.valueOf();
     };
 
+    const editTransaction = (transaction: Transaction) => {
+        setAddTransactionModalVisibility(true);
+        setTransactionToEdit(transaction);
+    };
+
     const renderTransaction = (transaction: Transaction) => (
         <Card>
-            <table className="transaction-table">
+            <table
+                className="transaction-table"
+                onClick={() => editTransaction(transaction)}
+            >
                 <tbody className="transaction-table__body" key={transaction.id}>
                     {transaction.entries.map((entry) => (
                         <tr
@@ -126,6 +135,11 @@ export const TransactionTable: FunctionComponent<TransactionTableProps> = ({
             {state.transactions.sort(sortTransactions).map((transaction) => {
                 return renderTransaction(transaction);
             })}
+            <AddTransactionModal
+                visible={addTransactionModalVisibility}
+                setVisible={setAddTransactionModalVisibility}
+                existingTransaction={transactionToEdit}
+            />
         </>
     );
 };

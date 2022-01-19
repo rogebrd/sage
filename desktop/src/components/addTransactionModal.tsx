@@ -6,15 +6,15 @@ import { client } from '../util/axios';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import { formatDateForInput, prettifyEnum } from '../util/helpers';
 import { Card } from './base/card';
-import { Entry, StockAmount } from '../model/entry';
-import { Transaction } from '../model/transaction';
+import { StockAmount } from '../model/entry';
 import { StockAmountModal } from './stockAmountModal';
 import { useSageContext } from '../data/provider';
+import { Transaction, Entry } from '../types';
 
 type AddTransactionModalProps = {
     visible: boolean;
     setVisible: Function;
-    existingTransaction?: Transaction;
+    existingTransaction: Transaction | null;
 };
 
 export const AddTransactionModal: FunctionComponent<
@@ -39,7 +39,7 @@ export const AddTransactionModal: FunctionComponent<
     useEffect(() => {
         if (existingTransaction) {
             setTransactionId(existingTransaction.id);
-            //setNewEntries(existingTransaction.getEntries(entries));
+            setNewEntries(existingTransaction.entries);
         } else {
             setTransactionId('creation');
         }
@@ -49,7 +49,7 @@ export const AddTransactionModal: FunctionComponent<
         accountId: state.accounts[0]?.id,
         style: EntryStyle.DEBIT,
         amount: 0,
-        date: new Date().valueOf(),
+        date: new Date(),
         category: '',
         tags: [],
         description: '',
@@ -57,25 +57,29 @@ export const AddTransactionModal: FunctionComponent<
 
     const addTransaction = (event: any) => {
         event.preventDefault();
-        const transaction = new Transaction({
+        const transaction = {
             id: transactionId,
             entryIds: newEntries.map((entry) => entry?.id || '-1'),
-        });
+        };
 
         const fullEntries = newEntries
             .map((entry) => {
                 return { ...defaultEntryValues, ...entry };
             })
-            .map((entry) => new Entry(entry));
+            .map((entry) => {
+                return entry as Entry;
+            });
 
         const newTransactionJson = {
             transaction: {
                 id: transaction.id,
                 date: fullEntries
                     .map((entry) => entry.date)
+                    .filter((date) => date !== undefined)
                     .reduce((earliestDate, currentDate) =>
                         earliestDate > currentDate ? currentDate : earliestDate
                     )
+                    .valueOf()
                     .toString(),
             },
             entries: fullEntries.map((entry) => {
@@ -87,15 +91,17 @@ export const AddTransactionModal: FunctionComponent<
                 }
                 return {
                     accountId: entry.accountId,
-                    style: EntryStyle[entry.style],
+                    style: EntryStyle[entry.style].toString(),
                     amount: formattedAmount,
-                    date: entry.date.toString(),
+                    date: entry.date.valueOf().toString(),
                     description: entry.description,
                     category: entry.category,
                     tags: entry.tags,
                 };
             }),
         };
+
+        console.log(newTransactionJson);
 
         client
             .post('/transaction', newTransactionJson)
@@ -321,7 +327,7 @@ const AddEntryRow: FunctionComponent<AddEntryRowProps> = ({
                             date: new Date(
                                 Date.parse(event.target.value).valueOf() +
                                     144000
-                            ).valueOf(),
+                            ),
                         })
                     }
                 />
