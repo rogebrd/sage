@@ -1,4 +1,4 @@
-import { Transaction } from '../types';
+import { Account, Transaction } from '../types';
 
 export enum NavigationState {
     LOGIN = 'LOGIN',
@@ -11,7 +11,7 @@ export interface SageState {
     categoryValues: any;
     typeValues: any;
     transactions: Transaction[];
-    accounts: any[];
+    accounts: Account[];
     lastUpdated: Date;
     transactionTableView: string;
 }

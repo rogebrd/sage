@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Account } from '../model/account';
 import { Button, Modal } from '@material-ui/core';
 import { allEntryStyles, EntryStyle } from '../model/enums';
 import { client } from '../util/axios';
@@ -9,7 +8,8 @@ import { Card } from './base/card';
 import { StockAmount } from '../model/entry';
 import { StockAmountModal } from './stockAmountModal';
 import { useSageContext } from '../data/provider';
-import { Transaction, Entry, EntryRaw, TransactionRaw } from '../types';
+import { Transaction, Entry, EntryRaw, TransactionRaw, Account } from '../types';
+import { AccountSelector } from './accountSelector';
 
 type AddTransactionModalProps = {
     visible: boolean;
@@ -260,21 +260,16 @@ const AddEntryRow: FunctionComponent<AddEntryRowProps> = ({
     return (
         <tr>
             <td>
-                <select
+                <AccountSelector 
                     value={entry.accountId}
-                    onChange={(event) =>
-                        updateEntryCallback({
-                            id: entry.id,
-                            accountId: event.target.value,
-                        })
-                    }
-                >
-                    {accounts.map((account) => (
-                        <option key={account.id} value={account.id}>
-                            {(account as any).parent_account_id}-{account.name}
-                        </option>
-                    ))}
-                </select>
+                    onChange={(accountId: string) =>
+                            updateEntryCallback({
+                                id: entry.id,
+                                accountId: accountId,
+                            })}
+                    includeChildAccounts={true}
+                    includeNoSelection={false}
+                />
             </td>
             <td>
                 <select

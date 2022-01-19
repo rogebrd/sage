@@ -1,5 +1,14 @@
 import { EntryStyle } from './model/enums';
 
+export type Account = {
+    id: string;
+    name: string;
+    value: number;
+    isPoints: boolean;
+    isRemaining: boolean;
+    parentAccountId?: string;
+}
+
 export type Transaction = {
     id: string;
     date: Date;
@@ -42,3 +51,12 @@ export type TransactionRaw = {
     date: string;
     entries: EntryRaw[];
 };
+
+export type AccountRaw = {
+    id: string,
+    name: string,
+    value: string,
+    is_points: boolean,
+    is_remaining: boolean,
+    parent_account_id?: string;
+}

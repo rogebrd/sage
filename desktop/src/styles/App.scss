@@ -133,7 +133,8 @@ body,
             }
 
             input,
-            select {
+            select,
+            .account-selector {
                 box-sizing: content-box;
                 margin: 0;
                 margin-right: 16px;

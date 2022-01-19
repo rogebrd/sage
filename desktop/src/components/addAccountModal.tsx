@@ -11,6 +11,7 @@ import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import { prettifyEnum } from '../util/helpers';
 import { Card } from './base/card';
 import { useSageContext } from '../data/provider';
+import { AccountSelector } from './accountSelector';
 
 type AddAccountModalProps = {
     visible: boolean;
@@ -159,21 +160,13 @@ export const AddAccountModal: FunctionComponent<AddAccountModalProps> = ({
                     </span>
                     <span className="modal__content--input">
                         <h2>Parent Account</h2>
-                        <select
+                        <AccountSelector 
                             value={newAccountParentAccountId}
-                            onChange={(event) =>
-                                setNewAccountParentAccountId(event.target.value)
-                            }
-                        >
-                            <option value="">None</option>
-                            {state.accounts
-                                .filter((account) => !account.parentAccountId)
-                                .map((account) => (
-                                    <option key={account.id} value={account.id}>
-                                        {account.name}
-                                    </option>
-                                ))}
-                        </select>
+                            onChange={(accountId) =>
+                                setNewAccountParentAccountId(accountId)}
+                            includeChildAccounts={false}
+                            includeNoSelection={true}
+                            />
                     </span>
                     <Button
                         className="modal__content--submit"

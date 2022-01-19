@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { EntryStyle } from '../model/enums';
-import { Entry, EntryRaw, TransactionRaw } from '../types';
+import { Account, AccountRaw, Entry, EntryRaw, TransactionRaw } from '../types';
 import {
     navigate,
     setAccounts,
@@ -106,8 +106,25 @@ export class ResourceManager {
 
     accounts() {
         this.authClient?.get('/modal/options').then((response) => {
-            this.dispatch(setAccounts(response.data.accounts));
+            this.dispatch(
+                setAccounts(
+                    this.normalizeAccounts(response.data.accounts)
+                )
+            );
         });
+    }
+
+    normalizeAccounts(accounts: AccountRaw[]): Account[] {
+        return accounts.map((account: AccountRaw) => {
+            return {
+                id: account.id,
+                name: account.name,
+                value: Number.parseFloat(account.value),
+                isPoints: account.is_points,
+                isRemaining: account.is_remaining,
+                parentAccountId: account.parent_account_id
+            }
+        })
     }
 
     normalizeEntries(entries: EntryRaw[]): Entry[] {
