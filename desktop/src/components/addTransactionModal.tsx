@@ -9,7 +9,7 @@ import { Card } from './base/card';
 import { StockAmount } from '../model/entry';
 import { StockAmountModal } from './stockAmountModal';
 import { useSageContext } from '../data/provider';
-import { Transaction, Entry } from '../types';
+import { Transaction, Entry, EntryRaw, TransactionRaw } from '../types';
 
 type AddTransactionModalProps = {
     visible: boolean;
@@ -42,6 +42,7 @@ export const AddTransactionModal: FunctionComponent<
             setNewEntries(existingTransaction.entries);
         } else {
             setTransactionId('creation');
+            setNewEntries([]);
         }
     }, [existingTransaction]);
 
@@ -72,7 +73,6 @@ export const AddTransactionModal: FunctionComponent<
 
         const newTransactionJson = {
             transaction: {
-                id: transaction.id,
                 date: fullEntries
                     .map((entry) => entry.date)
                     .filter((date) => date !== undefined)
@@ -81,16 +81,17 @@ export const AddTransactionModal: FunctionComponent<
                     )
                     .valueOf()
                     .toString(),
-            },
+            } as Partial<TransactionRaw>,
             entries: fullEntries.map((entry) => {
-                let formattedAmount;
+                let formattedAmount: string;
                 if (typeof entry.amount === 'number') {
                     formattedAmount = entry.amount.toString();
                 } else {
-                    formattedAmount = entry.amount;
+                    formattedAmount = JSON.stringify(entry.amount);
                 }
-                return {
-                    accountId: entry.accountId,
+
+                const newEntry: Partial<EntryRaw> = {
+                    account_id: entry.accountId,
                     style: EntryStyle[entry.style].toString(),
                     amount: formattedAmount,
                     date: entry.date.valueOf().toString(),
@@ -98,10 +99,18 @@ export const AddTransactionModal: FunctionComponent<
                     category: entry.category,
                     tags: entry.tags,
                 };
+
+                if (typeof entry.id !== 'number') {
+                    newEntry['id'] = entry.id;
+                }
+
+                return newEntry;
             }),
         };
 
-        console.log(newTransactionJson);
+        if (existingTransaction) {
+            newTransactionJson['transaction']['id'] = transaction.id;
+        }
 
         client
             .post('/transaction', newTransactionJson)

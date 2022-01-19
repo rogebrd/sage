@@ -24,19 +24,19 @@ def create_transaction(transaction, logger, account_total_manager):
         body = json.loads(transaction)
         transaction = body["transaction"]
         logger.info("Putting item: {}".format(transaction))
-        transaction_key = generate_uuid_key()
+        transaction_key = transaction.get("id", generate_uuid_key())
 
         entries = body["entries"]
         entry_keys = []
         for entry in entries:
-            entry_key = generate_uuid_key()
+            entry_key = entry.get("id", generate_uuid_key())
             logger.info("Putting item: {}".format(entry))
             item = {
                 "EntryId": {"S": entry_key},
-                "AccountId": {"S": entry.get("accountId")},
+                "AccountId": {"S": entry.get("account_id")},
                 "TransactionId": {"S": transaction_key},
                 "Style": {"S": entry.get("style")},
-                "Amount": {"S": str(entry.get("amount"))},
+                "Amount": {"S": entry.get("amount")},
                 "Date": {"N": entry.get("date")},
                 "Description": {"S": entry.get("description")},
                 "Category": {"S": entry.get("category")},
@@ -45,7 +45,7 @@ def create_transaction(transaction, logger, account_total_manager):
                 item["Tags"] = {"SS": entry.get("tags")}
             dynamodb.put_item(TableName=entry_table_name, Item=item)
             entry_keys.append(entry_key)
-            account_total_manager.invalidate_account_subtotal(entry.get("accountId"))
+            account_total_manager.invalidate_account_subtotal(entry.get("account_id"))
 
         dynamodb.put_item(
             TableName=transaction_table_name,
