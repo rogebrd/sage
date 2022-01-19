@@ -125,7 +125,7 @@ export class ResourceManager {
                 amount: amount,
                 date: new Date(Number.parseFloat(entry.date)),
                 category: entry.category,
-                tags: entry.tags,
+                tags: entry.tags ? entry.tags : [],
                 description: entry.description,
             };
         });

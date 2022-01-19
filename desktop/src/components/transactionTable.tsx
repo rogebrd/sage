@@ -137,7 +137,12 @@ export const TransactionTable: FunctionComponent<
             })}
             <AddTransactionModal
                 visible={addTransactionModalVisibility}
-                setVisible={setAddTransactionModalVisibility}
+                setVisible={(visible: boolean) => {
+                    setAddTransactionModalVisibility(visible);
+                    if (visible === false) {
+                        setTransactionToEdit(null);
+                    }
+                }}
                 existingTransaction={transactionToEdit}
             />
         </>

@@ -29,16 +29,18 @@ class AccountTotalManager:
     def get_account_value(self, account: Account):
         account_value = 0
         if self.account_status.get(account.id) != None:
+            self.logger.info("returning cached value")
             return self.account_status[account.id]
 
         account_value = self.__compute_account_total(account)
         if account.type != "INVESTMENT":
-            self.account_status[account.id] = account_value
+            self.account_status[str(account.id)] = account_value
             self.subtotal_client.put_account_subtotal(account, account_value)
         return account_value
 
     def invalidate_account_subtotal(self, accountId: str):
-        del self.account_status[accountId]
+        if self.account_status.get(accountId):
+            del self.account_status[accountId]
 
     def __compute_account_total(self, account: Account):
         entries = self.entry_client.get_entries_for_account_id(account.id)
