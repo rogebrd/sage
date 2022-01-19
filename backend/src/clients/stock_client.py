@@ -36,7 +36,9 @@ class StockClient:
             time_since_refresh = fetch_time - self.update_time
         else:
             time_since_refresh = 9999999
-        if time_since_refresh < STOCK_REFRESH_MINIMUM_INTERVAL:
+        if time_since_refresh < STOCK_REFRESH_MINIMUM_INTERVAL and all(
+            elem in self.current_prices for elem in symbols
+        ):
             self.logger.info("Refresh of symbols not needed")
             return
 
@@ -71,19 +73,12 @@ class StockClient:
     def get_entry_value(self, entry: Entry) -> float:
         amount_type_multiplier = 1 if (entry.style == "DEBIT") else -1
 
-        try:
-            # If float conversion works then amount is a general amount
-            amount_float = float(entry.amount)
-            return amount_type_multiplier * amount_float
-        except:
-            self.logger.debug("Float conversion failed, assuming stock amount")
-        # If float conversion fails then amount is stock amount
-        # ensure all double quotes
-        escaped_amount = entry.amount.replace("'", '"')
-        amount_blob = json.loads(escaped_amount)
-        self.fetch_prices([amount_blob["symbol"]])
+        if type(entry.amount) == float:
+            return amount_type_multiplier * entry.amount
+
+        self.fetch_prices([entry.amount["symbol"]])
         current_price = self.current_prices.get(
-            amount_blob["symbol"], amount_blob["unitPrice"]
+            entry.amount["symbol"], entry.amount["unitPrice"]
         )
 
-        return amount_type_multiplier * current_price * amount_blob["quantity"]
+        return amount_type_multiplier * current_price * entry.amount["quantity"]

@@ -27,9 +27,11 @@ export const setSummaryData = (
 });
 
 export const setTransactions = (
-    transactions: Transaction[]
+    transactions: Transaction[],
+    transactionTableView: string
 ): SetTransactionsAction => ({
     type: SageActionType.SET_TRANSACTIONS,
+    transactionTableView: transactionTableView,
     transactions: transactions,
 });
 

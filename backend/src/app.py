@@ -1,6 +1,6 @@
 import json
 from logging import Logger, log
-from model.account import Account
+from managers.account_total_manager import AccountTotalManager
 from clients.subtotal_client import SubtotalClient
 from clients.transaction_client import TransactionClient
 from flask import Flask, request
@@ -10,10 +10,8 @@ from clients.login_client import LoginClient
 from clients.stock_client import StockClient
 from clients.token_client import TokenClient
 from flask_cors import CORS
-import functools
-import operator
 
-from sage import create_account, create_transaction
+from sage import create_transaction
 
 from logging.config import dictConfig
 
@@ -52,6 +50,9 @@ transaction_client = TransactionClient()
 subtotal_client = SubtotalClient()
 stock_client = StockClient(token_client)
 login_client = LoginClient(token_client)
+account_total_manager = AccountTotalManager(
+    account_client, subtotal_client, entry_client, stock_client
+)
 
 
 @flask_app.route("/")
@@ -73,7 +74,7 @@ def handle_sidebar():
 
     accounts = account_client.get_all_accounts()
     for account in accounts:
-        account_sum = get_account_value(account)
+        account_sum = account_total_manager.get_account_value(account)
         if (
             account.max_value is not None
             and account.max_value != ""
@@ -191,7 +192,11 @@ def handle_modal_options():
 def handle_account():
     log_request(request)
 
-    create_account(request.get_data(), logger)
+    body = json.load(request.get_data())
+    account = body["account"]
+
+    accountId = account_client.create_account(account)
+    account_total_manager.invalidate_account_subtotal(accountId)
     return "success"
 
 
@@ -199,7 +204,7 @@ def handle_account():
 def handle_transaction():
     log_request(request)
 
-    create_transaction(request.get_data(), logger)
+    create_transaction(request.get_data(), logger, account_total_manager)
     return "success"
 
 
@@ -207,24 +212,6 @@ def log_request(request):
     logger.info(
         "Beginning request to {} with method {}".format(request.path, request.method)
     )
-
-
-def get_account_value(account: Account):
-    subtotals = subtotal_client.get_account_subtotals(account)
-    account_sum = 0
-    if not subtotals:
-        entries = entry_client.get_entries_for_account_id(account.id)
-        entry_values = [stock_client.get_entry_value(entry) for entry in entries]
-        account_sum = functools.reduce(operator.add, entry_values, 0)
-        if account.type != "INVESTMENT":
-            subtotal_client.put_account_subtotal(account, account_sum)
-    else:
-        max_date = 0
-        for total in subtotals:
-            if total.date > max_date:
-                account_sum = total.subtotal_value
-
-    return account_sum
 
 
 if __name__ == "__main__":

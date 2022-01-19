@@ -1,3 +1,6 @@
+import json
+
+
 class Entry:
     def __init__(
         self,
@@ -34,12 +37,20 @@ class Entry:
         }
 
     def from_dynamodb(dynamo_entry):
+        entry_amount = dynamo_entry["Amount"]["S"]
+        try:
+            entry_amount = float(entry_amount)
+        except:
+            # If float conversion fails then amount is stock amount
+            # ensure all double quotes
+            escaped_amount = entry_amount.replace("'", '"')
+            entry_amount = json.loads(escaped_amount)
         return Entry(
             id=dynamo_entry["EntryId"]["S"],
             account_id=dynamo_entry["AccountId"]["S"],
             transaction_id=dynamo_entry["TransactionId"]["S"],
             style=dynamo_entry["Style"]["S"],
-            amount=dynamo_entry["Amount"]["S"],
+            amount=entry_amount,
             date=dynamo_entry["Date"]["N"],
             category=dynamo_entry["Category"]["S"],
             tags=dynamo_entry.get("Tags", {}).get("SS"),

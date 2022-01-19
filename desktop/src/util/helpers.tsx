@@ -53,10 +53,10 @@ export const formatDate = (date: Date) => {
     return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 };
 
-export const formatDateForInput = (dateNumber: number | undefined) => {
+export const formatDateForInput = (dateNumber: Date | undefined) => {
     let date = new Date();
     if (dateNumber) {
-        date = new Date(dateNumber);
+        date = dateNumber;
     }
     return `${date.getFullYear()}-${
         date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
