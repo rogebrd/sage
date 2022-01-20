@@ -22,6 +22,7 @@ export const TransactionTable: FunctionComponent<
         useState<boolean>(false);
     const [transactionToEdit, setTransactionToEdit] =
         useState<Transaction | null>(null);
+    const [filter, setFilter] = useState<string>('');
 
     useEffect(() => {
         resourceManager.transactionTable();
@@ -29,7 +30,10 @@ export const TransactionTable: FunctionComponent<
 
     const renderAmount = (entry: Entry) => {
         if (typeof entry.amount === 'number') {
-            return getAmountString(entry.amount, false);
+            return getAmountString(entry.amount, state.accounts.find(
+                (account) =>
+                    account.id === entry.accountId
+            )?.isPoints || false);
         } else {
             return getStockAmountString(entry.amount);
         }
@@ -44,8 +48,8 @@ export const TransactionTable: FunctionComponent<
         setTransactionToEdit(transaction);
     };
 
-    const renderTransaction = (transaction: Transaction) => (
-        <Card>
+    const renderTransaction = (transaction: Transaction, key: number) => (
+        <Card key={key}>
             <table
                 className="transaction-table"
                 onClick={() => editTransaction(transaction)}
@@ -88,7 +92,7 @@ export const TransactionTable: FunctionComponent<
                                 {entry.description}
                             </td>
                             <td className="transaction-table__body__row--tags">
-                                {entry.tags}
+                                {entry.tags?.join(', ')}
                             </td>
                         </tr>
                     ))}
@@ -100,7 +104,10 @@ export const TransactionTable: FunctionComponent<
     return (
         <>
             <div className="control">
-                <span className="control__filter">filter</span>
+                <span className="control__filter">
+                    filter
+                    <input value={filter} onChange={(event) => setFilter(event.target.value)}></input>
+                </span>
                 <span className="control__expand">expand</span>
                 <span className="control__add">
                     <Button
@@ -132,8 +139,8 @@ export const TransactionTable: FunctionComponent<
                     </tr>
                 </thead>
             </table>
-            {state.transactions.sort(sortTransactions).map((transaction) => {
-                return renderTransaction(transaction);
+            {state.transactions.sort(sortTransactions).map((transaction, index) => {
+                return renderTransaction(transaction, index);
             })}
             <AddTransactionModal
                 visible={addTransactionModalVisibility}

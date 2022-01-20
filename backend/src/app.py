@@ -54,15 +54,6 @@ account_total_manager = AccountTotalManager(
     account_client, subtotal_client, entry_client, stock_client
 )
 
-
-@flask_app.route("/")
-def handle_base():
-    log_request(request)
-    login_client.validate_request_auth(request)
-
-    return "Welcome to Sage"
-
-
 @flask_app.route("/sidebar", methods=["GET"])
 def handle_sidebar():
     log_request(request)

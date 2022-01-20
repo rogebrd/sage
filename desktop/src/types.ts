@@ -39,7 +39,7 @@ export type EntryRaw = {
     id: string;
     account_id: string;
     style: string;
-    amount: string;
+    amount: any;
     date: string;
     category?: string | undefined;
     tags?: string[] | undefined;

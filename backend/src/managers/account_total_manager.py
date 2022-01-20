@@ -25,6 +25,18 @@ class AccountTotalManager:
         self.entry_client = entry_client
         self.stock_client = stock_client
         self.account_status = {}
+        self.get_all_stock_symbols()
+
+    def get_all_stock_symbols(self):
+        accounts = self.account_client.get_all_accounts()
+        all_symbols = []
+        for account in accounts:
+            entries = self.entry_client.get_entries_for_account_id(account.id)
+            all_symbols.extend(
+                [entry.amount["symbol"] for entry in entries if type(entry.amount) != float]
+            )
+        self.logger.info(all_symbols)
+        self.stock_client.set_symbols(all_symbols)
 
     def get_account_value(self, account: Account):
         account_value = 0
