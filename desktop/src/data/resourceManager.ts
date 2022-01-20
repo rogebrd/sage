@@ -129,17 +129,11 @@ export class ResourceManager {
 
     normalizeEntries(entries: EntryRaw[]): Entry[] {
         return entries.map((entry: EntryRaw) => {
-            let amount;
-            try {
-                amount = JSON.parse(entry.amount.replaceAll("'", '"'));
-            } catch (e) {
-                amount = Number.parseFloat(entry.amount);
-            }
             return {
                 id: entry.id,
                 accountId: entry.account_id,
                 style: EntryStyle[entry.style as keyof typeof EntryStyle],
-                amount: amount,
+                amount: entry.amount,
                 date: new Date(Number.parseFloat(entry.date)),
                 category: entry.category,
                 tags: entry.tags ? entry.tags : [],

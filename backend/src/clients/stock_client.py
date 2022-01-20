@@ -19,6 +19,11 @@ class StockClient:
         self.update_time = None
         self.current_prices = {}
         self.stock_token = None
+        self.all_symbols = []
+
+    def set_symbols(self, symbols):
+        self.all_symbols = symbols
+        self.fetch_prices(symbols)
 
     def __get_stock_token(self) -> None:
         if not self.stock_token:

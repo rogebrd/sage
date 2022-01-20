@@ -10,7 +10,7 @@ class TransactionClient:
         self.logger = logging.getLogger("TransactionClient")
         self.dynamodb = boto3.client("dynamodb", region_name="us-west-2")
         self.transaction_table_name = os.getenv("TRANSACTION_TABLE_NAME")
-        self.pagination_limit = 20
+        self.pagination_limit = 100
 
     def get_all_transactions(self) -> List[Transaction]:
         self.logger.info("Attempting to fetch all transactions")

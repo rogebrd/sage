@@ -1,8 +1,8 @@
-import { ChangeEvent, FunctionComponent, useEffect, useState } from "react";
+import { ChangeEvent, FunctionComponent } from "react";
 import { useSageContext } from "../data/provider";
 import { Account } from "../types";
 import SubdirectoryArrowRightOutlinedIcon from '@material-ui/icons/SubdirectoryArrowRightOutlined';
-import { InputLabel, MenuItem, Select } from "@material-ui/core";
+import { MenuItem, Select } from "@material-ui/core";
 
 export interface AccountSelectorProps {
     value: string | undefined;
@@ -13,40 +13,6 @@ export interface AccountSelectorProps {
 
 export const AccountSelector: FunctionComponent<AccountSelectorProps> = ({value, onChange, includeChildAccounts, includeNoSelection}) => {
     const {state} = useSageContext();
-    const [selectOptions, setSelectOptions] = useState<any[]>();
-
-    useEffect(() => {
-        let options = [];
-        if(includeNoSelection){
-            options.push({
-                value: {undefined},
-                label: "Select Account"
-            })
-        }
-
-        state.accounts
-            .filter((possibleParentAccount: Account) => !possibleParentAccount.parentAccountId)
-            .sort()
-            .map((account: Account) => {
-                options.push({
-                    value: account.id,
-                    label: account.name
-                })
-
-                if (includeChildAccounts){
-                    state.accounts
-                        .filter((possibleChildAccount) => possibleChildAccount.parentAccountId && possibleChildAccount.parentAccountId === account.id)
-                        .map((childAccount: Account) => {
-                            options.push({
-                                value: childAccount.id,
-                                label: childAccount.name,
-                                icon: <SubdirectoryArrowRightOutlinedIcon />
-                            })
-                        }) 
-                }
-            })
-        setSelectOptions(options);
-    }, []);
 
     return (
         <Select
